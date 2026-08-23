@@ -149,12 +149,17 @@
 .retro-navigation a:focus-visible,
 .retro-navigation button:hover,
 .retro-navigation button:focus-visible,
+.retro-navigation button.is-active,
 .retro-home:hover,
 .retro-home:focus-visible,
 .retro-social-links a:hover,
 .retro-social-links a:focus-visible {
   text-decoration: underline;
   text-underline-offset: 0.25rem;
+}
+
+.retro-navigation button.is-active {
+  color: var(--retro-blue);
 }
 
 .retro-navigation a:focus-visible,
@@ -248,7 +253,6 @@
   }
 
   .retro-navigation a[href="#education"],
-  .retro-navigation a[href="#experience"],
   .retro-navigation a[href="#projects"] {
     display: none;
   }

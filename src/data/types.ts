@@ -45,6 +45,7 @@ export interface Experience {
   role: string
   period: DateRange
   location?: string
+  image?: ImageAsset
   summary?: string
   highlights?: string[]
   technologies?: string[]

@@ -1,0 +1,176 @@
+.retro-experience {
+  width: min(100% - clamp(2rem, 7vw, 7rem), 980px);
+  margin: clamp(3.75rem, 8vh, 6rem) auto;
+}
+
+.retro-experience-intro {
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  text-align: center;
+}
+
+.retro-experience-intro p {
+  margin: 0 0 0.65rem;
+  font-size: clamp(0.58rem, 0.8vw, 0.72rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.retro-experience-intro h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 3.4rem);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.retro-experience-list {
+  display: grid;
+  gap: clamp(3rem, 7vw, 5.5rem);
+}
+
+.retro-experience-entry {
+  min-width: 0;
+}
+
+.retro-experience-heading {
+  display: grid;
+  grid-template-columns: auto minmax(1.5rem, 1fr) clamp(4.75rem, 8vw, 6.5rem);
+  align-items: start;
+}
+
+.retro-experience-heading h2 {
+  position: relative;
+  z-index: 1;
+  max-width: min(70vw, 34rem);
+  margin: 0;
+  padding: 0.52rem 0.75rem 0.43rem;
+  border: 1px solid var(--retro-ink);
+  background: var(--retro-paper);
+  font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+  line-height: 1.25;
+}
+
+.retro-experience-rule {
+  height: 1px;
+  margin-top: 1.12rem;
+  background: var(--retro-ink);
+}
+
+.retro-experience-mark,
+.retro-experience-image {
+  aspect-ratio: 1;
+  border: 1px solid var(--retro-ink);
+}
+
+.retro-experience-mark {
+  display: grid;
+  color: var(--retro-paper);
+  background:
+    linear-gradient(135deg, transparent 49%, rgb(255 255 255 / 16%) 50%),
+    var(--retro-blue);
+  font-family: Arial, sans-serif;
+  font-size: clamp(1.1rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  place-items: center;
+}
+
+.retro-experience-image {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.retro-experience-copy {
+  width: calc(100% - clamp(5.75rem, 10vw, 8rem));
+  padding: 1rem clamp(0rem, 1.2vw, 0.85rem) 0 clamp(0.75rem, 2.2vw, 2rem);
+}
+
+.retro-experience-role {
+  margin: 0;
+  color: var(--retro-blue);
+  font-size: clamp(0.76rem, 1.2vw, 1rem);
+  line-height: 1.45;
+}
+
+.retro-experience-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.58rem, 0.85vw, 0.72rem);
+  line-height: 1.55;
+}
+
+.retro-experience-meta span + span::before {
+  margin-right: 1rem;
+  color: var(--retro-rule);
+  content: "/";
+}
+
+.retro-experience-summary,
+.retro-experience-highlights {
+  margin: 1rem 0 0;
+  font-family: Arial, sans-serif;
+  font-size: clamp(0.82rem, 1.1vw, 1rem);
+  line-height: 1.65;
+}
+
+.retro-experience-highlights {
+  padding-left: 1.15rem;
+}
+
+.retro-experience-highlights li + li {
+  margin-top: 0.45rem;
+}
+
+.retro-experience-technologies {
+  margin: 1rem 0 0;
+  font-size: clamp(0.55rem, 0.8vw, 0.68rem);
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .retro-experience {
+    width: calc(100% - 2rem);
+    margin-block: 4rem 3rem;
+  }
+
+  .retro-experience-intro {
+    margin-bottom: 2.5rem;
+  }
+
+  .retro-experience-list {
+    gap: 3.5rem;
+  }
+
+  .retro-experience-heading {
+    grid-template-columns: auto minmax(0.75rem, 1fr) 3.75rem;
+  }
+
+  .retro-experience-heading h2 {
+    max-width: 60vw;
+  }
+
+  .retro-experience-copy {
+    width: 100%;
+    padding: 0.85rem 0.5rem 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .retro-experience-heading {
+    grid-template-columns: auto 1fr;
+  }
+
+  .retro-experience-rule {
+    margin-top: 1.08rem;
+  }
+
+  .retro-experience-mark,
+  .retro-experience-image {
+    grid-column: 2;
+    justify-self: end;
+    width: 3.75rem;
+    margin-top: -1px;
+  }
+}
