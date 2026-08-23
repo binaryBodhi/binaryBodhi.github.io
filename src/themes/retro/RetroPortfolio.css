@@ -76,6 +76,7 @@
 
 .retro-navigation a,
 .retro-navigation button,
+.retro-home,
 .retro-social-links a {
   border: 0;
   color: inherit;
@@ -87,7 +88,8 @@
 }
 
 .retro-navigation a,
-.retro-navigation button {
+.retro-navigation button,
+.retro-home {
   --retro-nav-cut: 0.45rem;
   position: relative;
   isolation: isolate;
@@ -106,15 +108,18 @@
 
 .retro-navigation a::before,
 .retro-navigation button::before,
+.retro-home::before,
 .retro-navigation a::after,
-.retro-navigation button::after {
+.retro-navigation button::after,
+.retro-home::after {
   position: absolute;
   content: "";
   pointer-events: none;
 }
 
 .retro-navigation a::before,
-.retro-navigation button::before {
+.retro-navigation button::before,
+.retro-home::before {
   inset: 0;
   z-index: -2;
   background: var(--retro-ink);
@@ -122,7 +127,8 @@
 }
 
 .retro-navigation a::after,
-.retro-navigation button::after {
+.retro-navigation button::after,
+.retro-home::after {
   inset: 1px;
   z-index: -1;
   background: var(--retro-paper);
@@ -143,6 +149,8 @@
 .retro-navigation a:focus-visible,
 .retro-navigation button:hover,
 .retro-navigation button:focus-visible,
+.retro-home:hover,
+.retro-home:focus-visible,
 .retro-social-links a:hover,
 .retro-social-links a:focus-visible {
   text-decoration: underline;
@@ -150,9 +158,18 @@
 }
 
 .retro-navigation a:focus-visible,
-.retro-navigation button:focus-visible {
+.retro-navigation button:focus-visible,
+.retro-home:focus-visible {
   outline: none;
   filter: drop-shadow(0 0 2px var(--retro-blue));
+}
+
+.retro-home {
+  position: absolute;
+  top: 0;
+  left: clamp(0.5rem, 1.5vw, 1.25rem);
+  z-index: 1;
+  transform: translateY(-50%);
 }
 
 .retro-social-links {
@@ -230,6 +247,7 @@
     gap: 0.75rem;
   }
 
+  .retro-navigation a[href="#education"],
   .retro-navigation a[href="#experience"],
   .retro-navigation a[href="#projects"] {
     display: none;

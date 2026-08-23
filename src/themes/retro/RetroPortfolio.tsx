@@ -11,8 +11,12 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
   const [linksAreVisible, setLinksAreVisible] = useState(false)
 
   return (
-    <main className="retro-page">
+    <main id="retro-home" className="retro-page">
       <section className="retro-frame" aria-labelledby="retro-name">
+
+        <a className="retro-home" href="#retro-home">
+          Home
+        </a>
 
         <button
           className="retro-border-control retro-reveal"
@@ -27,6 +31,7 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
         </button>
 
         <nav className="retro-navigation" aria-label="Portfolio navigation">
+          <a href="#education">Education</a>
           <a href="#experience">Experience</a>
           <a href="#projects">Projects</a>
           {data.profile.email && <a href={`mailto:${data.profile.email}`}>Contact</a>}
