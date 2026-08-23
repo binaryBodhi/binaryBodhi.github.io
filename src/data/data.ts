@@ -8,7 +8,7 @@ import type { PortfolioData } from './types'
 export const portfolioData = {
   profile: {
     name: 'Shantanu Kshatriya',
-    headline: 'Fullstack Software Developer | Machine learning enthusiast',
+    headline: 'Full-stack Software Developer | Machine learning enthusiast',
     biography: ["I am batman"],
     email: "shantanu.kx@gmail.com"
   },
@@ -34,7 +34,7 @@ export const portfolioData = {
   experience: [
     {
       id: "bootlabs",
-      organization: "Bootlabs(HDFC Bank)",
+      organization: "Bootlabs (HDFC Bank)",
       role: "Software Developer",
       period: {
         start: "2025-08"
@@ -52,7 +52,7 @@ export const portfolioData = {
     {
       id: "ai-adventures",
       organization: "AI Adventures",
-      role: "Machine learning Engineer",
+      role: "Machine Learning Engineer",
       period: {
         start: "2021-06",
         end: "2022-08"
@@ -79,7 +79,7 @@ export const portfolioData = {
     {
       id: "machine-learning",
       name: "Machine Learning and Data",
-      skills: ["scikit-learn", "Numpy", "Pandas", "OpenCV", "NLTK", "BERT", "Matplotlib"]
+      skills: ["scikit-learn", "NumPy", "Pandas", "OpenCV", "NLTK", "BERT", "Matplotlib"]
     },
     {
       id: "cloud",
@@ -92,7 +92,7 @@ export const portfolioData = {
     {
       id: "masters",
       institution: "Stevens Institute of Technology",
-      qualification: "Master\'s of Sc.",
+      qualification: "Master's of Sc.",
       field: "Software Engineering",
       period: {
         start: "2022-09",
@@ -103,7 +103,7 @@ export const portfolioData = {
     {
       id: "bachelors",
       institution: "National Institute of Technology, Karnataka",
-      qualification: "Bachelor\'s of Technology",
+      qualification: "Bachelor's of Technology",
       field: "Computer Science and Engineering",
       period: {
         start: "2017-09",
