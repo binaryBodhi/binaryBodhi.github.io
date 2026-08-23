@@ -15,7 +15,7 @@ export const portfolioData = {
 
   socialLinks: [
     {
-        id: "githhub",
+        id: "github",
         platform: 'github',
         label: "GitHub",
         url: "https://github.com/binaryBodhi",
@@ -26,7 +26,7 @@ export const portfolioData = {
       id: "linkedin", 
       platform: 'linkedin',
       label: "LinkedIn",
-      url: "www.linkedin.com/in/shantanu-kshatriya",
+      url: "https://www.linkedin.com/in/shantanu-kshatriya",
       username: "Shantanu Kshatriya"
     },
   ],
@@ -37,8 +37,7 @@ export const portfolioData = {
       organization: "Bootlabs(HDFC Bank)",
       role: "Software Developer",
       period: {
-        start: "2025-08",
-        end: "Current"
+        start: "2025-08"
       }
     },
     {
@@ -69,18 +68,18 @@ export const portfolioData = {
     },
     {
       id: "web",
-      name: "Web and Bankend",
+      name: "Web and Backend",
       skills: ["React", "Node.js", "Express", "Flask"]
     },
     {
       id: "databases",
       name: "Databases and Backend Platforms",
-      skills: ["MongoDB", "MySQL", "PostreSQL", "Firebase"]
+      skills: ["MongoDB", "MySQL", "Postgres", "Firebase"]
     },
     {
       id: "machine-learning",
       name: "Machine Learning and Data",
-      skills: ["Sci-kit Learn", "Numpy", "Panda", "OpenCV", "NLTK", "BERT", "Matplotlib"]
+      skills: ["scikit-learn", "Numpy", "Pandas", "OpenCV", "NLTK", "BERT", "Matplotlib"]
     },
     {
       id: "cloud",
