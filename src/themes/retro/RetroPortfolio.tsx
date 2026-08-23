@@ -13,9 +13,9 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
   return (
     <main className="retro-page">
       <section className="retro-frame" aria-labelledby="retro-name">
-        
+
         <button
-          className="retro-reveal"
+          className="retro-border-control retro-reveal"
           type="button"
           aria-expanded={linksAreVisible}
           onClick={() => setLinksAreVisible((areVisible) => !areVisible)}
@@ -30,11 +30,6 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
           <a href="#experience">Experience</a>
           <a href="#projects">Projects</a>
           {data.profile.email && <a href={`mailto:${data.profile.email}`}>Contact</a>}
-          {onSwitchTheme && (
-            <button type="button" onClick={onSwitchTheme}>
-              Modern Site
-            </button>
-          )}
         </nav>
 
         {linksAreVisible && (
@@ -54,6 +49,17 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
           </div>
           <p className="retro-headline">{data.profile.headline}</p>
         </div>
+
+        {onSwitchTheme && (
+          <button
+            className="retro-border-control retro-theme-switch"
+            type="button"
+            onClick={onSwitchTheme}
+          >
+            Modern Site
+          </button>
+        )}
+
       </section>
 
       <footer className="retro-footer">
