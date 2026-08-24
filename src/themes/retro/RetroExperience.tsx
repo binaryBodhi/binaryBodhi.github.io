@@ -26,6 +26,26 @@ function formatPeriod(experience: Experience) {
   return `${formatDate(experience.period.start)} — ${end}`
 }
 
+function formatTimeline(experience: Experience[]) {
+  if (experience.length === 0) {
+    return null
+  }
+
+  const start = experience.reduce((earliest, item) =>
+    item.period.start < earliest ? item.period.start : earliest,
+  experience[0].period.start)
+
+  const isOngoing = experience.some((item) => !item.period.end)
+  const completedEnds = experience
+    .map((item) => item.period.end)
+    .filter((end): end is string => Boolean(end))
+  const latestEnd = completedEnds.reduce((latest, end) =>
+    end > latest ? end : latest,
+  completedEnds[0] ?? start)
+
+  return `${start.split("-")[0]} — ${isOngoing ? "Present" : latestEnd.split("-")[0]}`
+}
+
 function getOrganizationMark(organization: string) {
   return organization
     .replace(/\([^)]*\)/g, "")
@@ -38,10 +58,16 @@ function getOrganizationMark(organization: string) {
 }
 
 export function RetroExperience({ experience }: RetroExperienceProps) {
+  const timeline = formatTimeline(experience)
+
   return (
-    <section className="retro-experience" aria-labelledby="experience-title">
+    <section
+      className="retro-experience"
+      aria-labelledby="experience-title"
+      tabIndex={0}
+    >
       <header className="retro-experience-intro">
-        <p>Selected timeline</p>
+        {timeline && <p>{timeline}</p>}
         <h1 id="experience-title">Experience</h1>
       </header>
 
