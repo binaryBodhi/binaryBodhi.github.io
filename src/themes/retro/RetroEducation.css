@@ -1,0 +1,168 @@
+.retro-education {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(3.75rem, 8dvh, 6rem)
+    max(clamp(1rem, 3.5vw, 3.5rem), calc((100% - 920px) / 2))
+    clamp(3rem, 7dvh, 5rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.retro-education:focus-visible {
+  outline: 1px solid var(--retro-blue);
+  outline-offset: -3px;
+}
+
+.retro-education-intro {
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  text-align: center;
+}
+
+.retro-education-intro p {
+  margin: 0 0 0.65rem;
+  font-size: clamp(0.58rem, 0.8vw, 0.72rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.retro-education-intro h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 3.4rem);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.retro-education-list {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+.retro-education-record {
+  min-width: 0;
+  border: 1px solid var(--retro-ink);
+  background: var(--retro-paper);
+}
+
+.retro-education-record-heading {
+  display: grid;
+  grid-template-columns: auto minmax(2rem, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem 0;
+}
+
+.retro-education-index,
+.retro-education-period {
+  font-size: clamp(0.58rem, 0.85vw, 0.72rem);
+  line-height: 1.4;
+}
+
+.retro-education-index {
+  color: var(--retro-blue);
+}
+
+.retro-education-rule {
+  height: 1px;
+  background: var(--retro-rule);
+}
+
+.retro-education-period {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.retro-education-record h2 {
+  margin: 0.75rem 1rem 0;
+  font-size: clamp(0.78rem, 1.45vw, 1.1rem);
+  letter-spacing: -0.025em;
+  line-height: 1.45;
+}
+
+.retro-education-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1rem 2rem;
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border-top: 1px solid var(--retro-rule);
+}
+
+.retro-education-qualification,
+.retro-education-field,
+.retro-education-location {
+  margin: 0;
+}
+
+.retro-education-qualification {
+  color: var(--retro-blue);
+  font-size: clamp(0.72rem, 1.1vw, 0.92rem);
+  line-height: 1.45;
+}
+
+.retro-education-field {
+  margin-top: 0.45rem;
+  font-size: clamp(0.62rem, 0.9vw, 0.76rem);
+  line-height: 1.55;
+}
+
+.retro-education-location {
+  font-size: clamp(0.56rem, 0.8vw, 0.68rem);
+  line-height: 1.55;
+  text-align: right;
+}
+
+.retro-education-highlights {
+  margin: 0;
+  padding: 1rem 1rem 1rem 2.15rem;
+  border-top: 1px solid var(--retro-rule);
+  font-family: Arial, sans-serif;
+  font-size: clamp(0.82rem, 1.1vw, 1rem);
+  line-height: 1.65;
+}
+
+.retro-education-highlights li + li {
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 700px) {
+  .retro-education {
+    padding: 4rem 1rem 3rem;
+  }
+
+  .retro-education-intro {
+    margin-bottom: 2.25rem;
+  }
+
+  .retro-education-record-heading {
+    grid-template-columns: auto minmax(1rem, 1fr);
+    gap: 0.55rem;
+    padding: 0.75rem 0.8rem 0;
+  }
+
+  .retro-education-period {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .retro-education-record h2 {
+    margin: 0.65rem 0.8rem 0;
+  }
+
+  .retro-education-details {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    padding: 0.8rem;
+  }
+
+  .retro-education-location {
+    text-align: left;
+  }
+}

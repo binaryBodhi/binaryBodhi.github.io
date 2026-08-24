@@ -1,29 +1,9 @@
 import type { Experience } from "../../data/types"
+import { formatDateRange } from "./date"
 import "./RetroExperience.css"
 
 interface RetroExperienceProps {
   experience: Experience[]
-}
-
-function formatDate(value: string) {
-  const [year, month] = value.split("-").map(Number)
-
-  if (!month) {
-    return value
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    year: "numeric",
-  }).format(new Date(Date.UTC(year, month - 1)))
-}
-
-function formatPeriod(experience: Experience) {
-  const end = experience.period.end
-    ? formatDate(experience.period.end)
-    : "Present"
-
-  return `${formatDate(experience.period.start)} — ${end}`
 }
 
 function formatTimeline(experience: Experience[]) {
@@ -93,7 +73,7 @@ export function RetroExperience({ experience }: RetroExperienceProps) {
             <div className="retro-experience-copy">
               <p className="retro-experience-role">{item.role}</p>
               <p className="retro-experience-meta">
-                <span>{formatPeriod(item)}</span>
+                <span>{formatDateRange(item.period)}</span>
                 {item.location && <span>{item.location}</span>}
               </p>
 

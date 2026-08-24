@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { PortfolioData } from "../../data/types"
+import { RetroEducation } from "./RetroEducation"
 import { RetroExperience } from "./RetroExperience"
 import "./RetroPortfolio.css"
 
@@ -10,13 +11,20 @@ interface RetroPortfolioProps {
 
 export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
   const [linksAreVisible, setLinksAreVisible] = useState(false)
-  const [activeView, setActiveView] = useState<"home" | "experience">("home")
+  const [activeView, setActiveView] = useState<
+    "home" | "education" | "experience"
+  >("home")
+  const activeHeadingId = {
+    home: "retro-name",
+    education: "education-title",
+    experience: "experience-title",
+  }[activeView]
 
   return (
     <main id="retro-home" className="retro-page">
       <section
         className="retro-frame"
-        aria-labelledby={activeView === "home" ? "retro-name" : "experience-title"}
+        aria-labelledby={activeHeadingId}
       >
 
         <button
@@ -41,7 +49,14 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
         </button>
 
         <nav className="retro-navigation" aria-label="Portfolio navigation">
-          <a href="#education">Education</a>
+          <button
+            className={activeView === "education" ? "is-active" : undefined}
+            type="button"
+            aria-pressed={activeView === "education"}
+            onClick={() => setActiveView("education")}
+          >
+            Education
+          </button>
           <button
             className={activeView === "experience" ? "is-active" : undefined}
             type="button"
@@ -72,8 +87,10 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
             </div>
             <p className="retro-headline">{data.profile.headline}</p>
           </div>
-        ) : (
+        ) : activeView === "experience" ? (
           <RetroExperience experience={data.experience} />
+        ) : (
+          <RetroEducation education={data.education} />
         )}
 
         {onSwitchTheme && (
