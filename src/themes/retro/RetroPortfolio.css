@@ -224,6 +224,11 @@
   white-space: nowrap;
 }
 
+.retro-title-row h1:focus-visible {
+  outline: 1px dashed var(--retro-blue);
+  outline-offset: 0.35rem;
+}
+
 .retro-headline {
   max-width: 42rem;
   margin: 0.8rem auto 0;

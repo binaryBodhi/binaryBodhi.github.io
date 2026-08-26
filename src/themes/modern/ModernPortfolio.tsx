@@ -8,7 +8,7 @@ import "./ModernPortfolio.css"
 
 interface ModernPortfolioProps {
   data: PortfolioData
-  onSwitchTheme?: () => void
+  onSwitchTheme: () => void
 }
 
 export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
@@ -149,7 +149,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
               </div>
               <div className="modern-section-placeholder">
                 <p className="modern-section-label">Modern portfolio module</p>
-                <h2 id={`${item.id}-title`}>{item.label}</h2>
+                <h2 id={`${item.id}-title`} tabIndex={-1}>{item.label}</h2>
                 {item.id === "modern-about" && (
                   <p className="modern-section-intro">{data.profile.headline}</p>
                 )}

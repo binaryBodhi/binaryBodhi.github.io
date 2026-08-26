@@ -83,7 +83,7 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
           <div className="retro-introduction">
             <p className="retro-eyebrow">Portfolio of</p>
             <div className="retro-title-row">
-              <h1 id="retro-name">{data.profile.name}</h1>
+              <h1 id="retro-name" tabIndex={-1}>{data.profile.name}</h1>
             </div>
             <p className="retro-headline">{data.profile.headline}</p>
           </div>
