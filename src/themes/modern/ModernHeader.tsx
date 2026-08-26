@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { modernNavigationItems } from "./modernNavigation"
 import type { ModernSectionId } from "./modernNavigation"
 
@@ -11,6 +11,8 @@ interface ModernHeaderProps {
 }
 
 const scrambleCharacters = "<>/[]{}01*+#"
+const scrambleFrameDuration = 34
+const scrambleExtension = 350
 
 function getInitials(name: string) {
   return name
@@ -22,32 +24,26 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-function ScrambleLabel({ text }: { text: string }) {
+function ScrambleLabel({ isActive, text }: { isActive: boolean; text: string }) {
   const [visibleText, setVisibleText] = useState(text)
   const animationRef = useRef<number | null>(null)
 
-  useEffect(() => {
-    return () => {
-      if (animationRef.current !== null) window.clearInterval(animationRef.current)
-    }
-  }, [])
-
-  const stopAnimation = () => {
-    if (animationRef.current !== null) {
-      window.clearInterval(animationRef.current)
-      animationRef.current = null
-    }
-    setVisibleText(text)
-  }
-
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
     if (animationRef.current !== null) window.clearInterval(animationRef.current)
 
+    const previousDuration =
+      Math.ceil(text.length / 0.55) * scrambleFrameDuration
+    const extendedDuration = previousDuration + scrambleExtension
+    const totalFrames = Math.max(
+      1,
+      Math.ceil(extendedDuration / scrambleFrameDuration),
+    )
+    const charactersPerFrame = text.length / totalFrames
     let resolvedCharacters = 0
     animationRef.current = window.setInterval(() => {
-      resolvedCharacters += 0.55
+      resolvedCharacters += charactersPerFrame
       setVisibleText(
         [...text]
           .map((character, index) => {
@@ -59,19 +55,34 @@ function ScrambleLabel({ text }: { text: string }) {
           .join(""),
       )
 
-      if (resolvedCharacters >= text.length) stopAnimation()
-    }, 34)
-  }
+      if (resolvedCharacters >= text.length) {
+        window.clearInterval(animationRef.current ?? undefined)
+        animationRef.current = null
+        setVisibleText(text)
+      }
+    }, scrambleFrameDuration)
+  }, [text])
+
+  useEffect(() => {
+    if (!isActive) return
+
+    startAnimation()
+
+    return () => {
+      if (animationRef.current !== null) {
+        window.clearInterval(animationRef.current)
+        animationRef.current = null
+      }
+    }
+  }, [isActive, startAnimation])
 
   return (
     <>
       <span
         className="modern-scramble-label"
         aria-hidden="true"
-        onPointerEnter={startAnimation}
-        onPointerLeave={stopAnimation}
       >
-        {visibleText}
+        {isActive ? visibleText : text}
       </span>
       <span className="modern-visually-hidden">{text}</span>
     </>
@@ -86,6 +97,7 @@ export function ModernHeader({
   onSwitchTheme,
 }: ModernHeaderProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const [scrambleTarget, setScrambleTarget] = useState<string | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const navigationRef = useRef<HTMLElement>(null)
 
@@ -182,6 +194,8 @@ export function ModernHeader({
             className="modern-nav-link"
             href={`#${item.id}`}
             aria-current={activeSection === item.id ? "location" : undefined}
+            onPointerEnter={() => setScrambleTarget(item.id)}
+            onPointerLeave={() => setScrambleTarget(null)}
             onClick={(event) => {
               event.preventDefault()
               handleNavigation(item.id)
@@ -193,7 +207,10 @@ export function ModernHeader({
             >
               {item.key}
             </span>
-            <ScrambleLabel text={item.label} />
+            <ScrambleLabel
+              isActive={scrambleTarget === item.id}
+              text={item.label}
+            />
           </a>
         ))}
 
@@ -201,9 +218,14 @@ export function ModernHeader({
           <button
             className="modern-theme-switch modern-theme-switch--mobile"
             type="button"
+            onPointerEnter={() => setScrambleTarget("retro-mobile")}
+            onPointerLeave={() => setScrambleTarget(null)}
             onClick={onSwitchTheme}
           >
-            <ScrambleLabel text="Retro Site" />
+            <ScrambleLabel
+              isActive={scrambleTarget === "retro-mobile"}
+              text="Retro Site"
+            />
             <span className="modern-key modern-key--pink" aria-hidden="true">
               R
             </span>
@@ -215,9 +237,14 @@ export function ModernHeader({
         <button
           className="modern-theme-switch modern-theme-switch--desktop"
           type="button"
+          onPointerEnter={() => setScrambleTarget("retro-desktop")}
+          onPointerLeave={() => setScrambleTarget(null)}
           onClick={onSwitchTheme}
         >
-          <ScrambleLabel text="Retro Site" />
+          <ScrambleLabel
+            isActive={scrambleTarget === "retro-desktop"}
+            text="Retro Site"
+          />
           <span className="modern-key modern-key--pink" aria-hidden="true">
             R
           </span>
