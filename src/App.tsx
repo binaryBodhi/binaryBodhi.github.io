@@ -4,18 +4,16 @@ import { RetroPortfolio } from "./themes/retro/RetroPortfolio"
 import { portfolioData } from "./data/data"
 
 function App() {
-  const [theme, setTheme] = useState< 'retro' | 'modern' >('retro')
+  const [theme, setTheme] = useState<'retro' | 'modern'>('retro')
 
-  return(
-    <div>
+  return (
+    <div className="app">
       {theme === 'modern' ? (
-        <>
-          <button type="button" onClick={() => setTheme('retro')}>
-            Switch to retro theme
-          </button>
-          <ModernPortfolio data={portfolioData} />
-        </>
-      ):(
+        <ModernPortfolio
+          data={portfolioData}
+          onSwitchTheme={() => setTheme('retro')}
+        />
+      ) : (
         <RetroPortfolio data={portfolioData} onSwitchTheme={() => setTheme('modern')} />
       )}
     </div>
