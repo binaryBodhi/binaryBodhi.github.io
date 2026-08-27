@@ -19,7 +19,7 @@
   --modern-space-6: 2rem;
   --modern-space-7: 3rem;
   --modern-space-8: 4rem;
-  --modern-header-height: 3rem;
+  --modern-header-height: 3.5rem;
   --modern-border-width: 1px;
   --modern-duration-fast: 140ms;
   --modern-duration-medium: 260ms;
@@ -71,14 +71,30 @@
 
 .modern-shell {
   position: relative;
-  display: grid;
-  grid-template-rows: var(--modern-header-height) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: var(--modern-space-4);
   width: 100%;
   height: 100%;
   min-width: 0;
   min-height: 0;
+}
+
+.modern-header-shell,
+.modern-main-shell {
+  position: relative;
+  min-width: 0;
   border: var(--modern-border-width) solid var(--modern-border);
   background: var(--modern-panel);
+}
+
+.modern-header-shell {
+  flex: 0 0 var(--modern-header-height);
+}
+
+.modern-main-shell {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .modern-header {
@@ -87,8 +103,8 @@
   display: grid;
   grid-template-columns: minmax(3.25rem, 1fr) auto auto;
   align-items: center;
+  height: 100%;
   min-width: 0;
-  border-bottom: var(--modern-border-width) solid var(--modern-border);
   background: var(--modern-panel);
   font-family: var(--modern-font-display);
   font-size: 0.68rem;
@@ -101,19 +117,19 @@
   justify-self: start;
   gap: var(--modern-space-3);
   height: 100%;
-  padding-inline: var(--modern-space-3);
+  padding-right: var(--modern-space-3);
   text-decoration: none;
 }
 
 .modern-brand-mark {
   display: grid;
   flex: 0 0 auto;
-  width: 1.75rem;
-  height: 1.75rem;
-  border: var(--modern-border-width) solid var(--modern-border);
+  width: calc(var(--modern-header-height) - (2 * var(--modern-border-width)));
+  height: 100%;
+  border: 0;
   background: var(--modern-ink);
   color: var(--modern-panel);
-  font-size: 0.58rem;
+  font-size: 1rem;
   place-items: center;
 }
 
@@ -244,6 +260,7 @@
 }
 
 .modern-main {
+  height: 100%;
   min-width: 0;
   min-height: 0;
   overflow-x: hidden;
@@ -301,12 +318,8 @@
   font-size: 0.75rem;
 }
 
-.modern-section-placeholder {
-  display: flex;
+.modern-section-body {
   min-width: 0;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(1.5rem, 6vw, 6rem);
 }
 
 .modern-section-label {
@@ -318,26 +331,10 @@
   text-transform: uppercase;
 }
 
-.modern-section-placeholder h2 {
-  width: fit-content;
-  max-width: 14ch;
-  margin: 0;
-  font-size: clamp(3rem, 10vw, 9rem);
-  font-weight: 500;
-  letter-spacing: -0.065em;
-  line-height: 0.86;
-}
-
-.modern-section-placeholder h2:focus-visible {
+.modern-section-body h1:focus-visible,
+.modern-section-body h2:focus-visible {
   outline: 2px dashed var(--modern-ink);
   outline-offset: 0.35rem;
-}
-
-.modern-section-intro {
-  max-width: 42rem;
-  margin: var(--modern-space-5) 0 0;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  line-height: 1.35;
 }
 
 .modern-nav-link:focus-visible,
@@ -364,7 +361,7 @@
 
 @media (max-width: 767px) {
   .modern-page {
-    --modern-header-height: 3.25rem;
+    --modern-header-height: 3.75rem;
     padding:
       max(var(--modern-space-3), env(safe-area-inset-top))
       max(var(--modern-space-3), env(safe-area-inset-right))
@@ -506,13 +503,6 @@
     text-align: center;
   }
 
-  .modern-section-placeholder {
-    padding: var(--modern-space-5);
-  }
-
-  .modern-section-placeholder h2 {
-    font-size: clamp(2.75rem, 17vw, 5.5rem);
-  }
 }
 
 @media (max-width: 390px) {
@@ -520,9 +510,6 @@
     display: none;
   }
 
-  .modern-section-placeholder {
-    padding: var(--modern-space-4);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

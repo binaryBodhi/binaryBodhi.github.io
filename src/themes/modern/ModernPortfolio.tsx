@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import type { PortfolioData } from "../../data/types"
+import { AboutSection } from "./components/AboutSection"
+import { ContactSection } from "./components/ContactSection"
+import { ExperienceSection } from "./components/ExperienceSection"
+import { HeroSection } from "./components/HeroSection"
+import { ProjectsSection } from "./components/ProjectsSection"
+import { SkillsSection } from "./components/SkillsSection"
 import { ModernHeader } from "./ModernHeader"
 import { modernNavigationItems } from "./modernNavigation"
 import type { ModernSectionId } from "./modernNavigation"
 import "./ModernPortfolio.css"
+import "./ModernSections.css"
 
 interface ModernPortfolioProps {
   data: PortfolioData
@@ -69,9 +76,10 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
 
     const rootRect = scrollRoot.getBoundingClientRect()
     const sectionRect = section.getBoundingClientRect()
+    const navigationOffset = Number(section.dataset.navigationOffset ?? 0)
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     scrollRoot.scrollTo({
-      top: scrollRoot.scrollTop + sectionRect.top - rootRect.top,
+      top: scrollRoot.scrollTop + sectionRect.top - rootRect.top + navigationOffset,
       behavior: reducedMotion ? "auto" : "smooth",
     })
     setActiveSection(sectionId)
@@ -120,43 +128,36 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
       </a>
 
       <div className="modern-shell">
-        <ModernHeader
-          activeSection={activeSection}
-          name={data.profile.name}
-          onMenuStateChange={setNavigationIsOpen}
-          onNavigate={navigateToSection}
-          onSwitchTheme={onSwitchTheme}
-        />
+        <div className="modern-header-shell">
+          <ModernHeader
+            activeSection={activeSection}
+            name={data.profile.name}
+            onMenuStateChange={setNavigationIsOpen}
+            onNavigate={navigateToSection}
+            onSwitchTheme={onSwitchTheme}
+          />
+        </div>
 
-        <main
-          ref={mainRef}
-          id="modern-main"
-          className={`modern-main${navigationIsOpen ? " is-menu-locked" : ""}`}
-          tabIndex={0}
-          inert={navigationIsOpen}
-          aria-label="Modern portfolio content"
-          onKeyDown={handleMainKeyDown}
-        >
-          {modernNavigationItems.map((item, index) => (
-            <section
-              key={item.id}
-              id={item.id}
-              className="modern-shell-section"
-              aria-labelledby={`${item.id}-title`}
-            >
-              <div className="modern-section-index" aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </div>
-              <div className="modern-section-placeholder">
-                <p className="modern-section-label">Modern portfolio module</p>
-                <h2 id={`${item.id}-title`} tabIndex={-1}>{item.label}</h2>
-                {item.id === "modern-about" && (
-                  <p className="modern-section-intro">{data.profile.headline}</p>
-                )}
-              </div>
-            </section>
-          ))}
-        </main>
+        <div className="modern-main-shell">
+          <main
+            ref={mainRef}
+            id="modern-main"
+            className={`modern-main${navigationIsOpen ? " is-menu-locked" : ""}`}
+            tabIndex={0}
+            inert={navigationIsOpen}
+            aria-label="Modern portfolio content"
+            onKeyDown={handleMainKeyDown}
+          >
+            <div className="modern-about-experience-flow">
+              <HeroSection data={data} />
+              <ExperienceSection experience={data.experience} />
+            </div>
+            <ProjectsSection projects={data.projects ?? []} />
+            <SkillsSection skills={data.skills} />
+            <AboutSection education={data.education} profile={data.profile} />
+            <ContactSection profile={data.profile} socialLinks={data.socialLinks} />
+          </main>
+        </div>
       </div>
     </div>
   )

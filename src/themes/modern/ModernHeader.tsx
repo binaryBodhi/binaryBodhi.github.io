@@ -90,7 +90,7 @@ function ScrambleLabel({ isActive, text }: { isActive: boolean; text: string }) 
 }
 
 export function ModernHeader({
-  activeSection,
+activeSection,
   name,
   onMenuStateChange,
   onNavigate,
