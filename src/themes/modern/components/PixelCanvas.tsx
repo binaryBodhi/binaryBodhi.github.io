@@ -146,34 +146,23 @@ function drawTakeover(
   context.clearRect(0, 0, width, height)
 
   const progress = Math.min(1, Math.max(0, options.progress()))
-  const cell = Math.max(10, Math.min(18, Math.round(width / 76)))
+  if (progress === 0) return
+  context.fillStyle = "#111111"
+  if (progress === 1) {
+    context.fillRect(0, 0, width, height)
+    return
+  }
+
+  // Fine, scattered cells accumulate in the gutters around the panels.
+  // There is no directional curtain or movement of the content underneath.
+  const cell = 3
   const columns = Math.ceil(width / cell)
   const rows = Math.ceil(height / cell)
 
-  context.fillStyle = "#111111"
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
-      const distanceFromRight = (columns - 1 - column) / Math.max(1, columns - 1)
-      const staticNoise = pseudoRandom(column * 1.73, row * 0.91) - 0.5
-      const rowWave = Math.sin(row * 0.47 + column * 0.13) * 0.045
-      const activation = Math.min(
-        0.88,
-        Math.max(
-          0.015,
-          0.025 + distanceFromRight * 0.82 + staticNoise * 0.18 + rowWave,
-        ),
-      )
-      const strength = Math.min(1, Math.max(0, (progress - activation) * 14))
-      if (strength <= 0) continue
-
-      const size = cell * strength
-      const inset = (cell - size) / 2
-      context.fillRect(
-        column * cell + inset,
-        row * cell + inset,
-        size,
-        size,
-      )
+      if (pseudoRandom(column, row) > progress) continue
+      context.fillRect(column * cell, row * cell, cell, cell)
     }
   }
 }
@@ -192,7 +181,10 @@ function drawMark(
   time: number,
   options: DrawOptions,
 ) {
-  context.fillStyle = "#111111"
+  const paletteProgress = Math.min(1, Math.max(0, options.progress()))
+  const background = Math.round(255 + (17 - 255) * paletteProgress)
+  const foreground = Math.round(17 + (248 - 17) * paletteProgress)
+  context.fillStyle = `rgb(${background}, ${background}, ${background})`
   context.fillRect(0, 0, width, height)
 
   const fromGlyph = glyphs[options.fromMark] ?? glyphs.S
@@ -221,7 +213,7 @@ function drawMark(
       const y = originY + row * cell + cell / 2 - size / 2 + driftY
       const isAccent = (row * 5 + column) % 17 === 0
 
-      context.fillStyle = isAccent ? "#c6a348" : "#f8f8f5"
+      context.fillStyle = isAccent ? "#c6a348" : `rgb(${foreground}, ${foreground}, ${Math.round(17 + (245 - 17) * paletteProgress)})`
       context.fillRect(Math.round(x), Math.round(y), Math.round(size), Math.round(size))
     }
   }

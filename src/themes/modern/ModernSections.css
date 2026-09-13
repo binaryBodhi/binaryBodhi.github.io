@@ -126,8 +126,7 @@ button.modern-window-control:focus-visible {
 }
 
 .modern-about-experience-flow > .modern-hero-section {
-  position: sticky;
-  top: var(--modern-hero-pin-top, 0px);
+  position: relative;
   z-index: 0;
 }
 
@@ -331,26 +330,21 @@ button.modern-window-control:focus-visible {
 
 .modern-experience-section {
   --modern-experience-viewport: 46rem;
-  --modern-experience-entrance-travel: 42rem;
   --modern-experience-timeline-travel: 70rem;
-  --modern-experience-source-overlap: 0px;
-  --modern-experience-entrance-progress: 0;
-  --modern-experience-content-inset: 100%;
+  --modern-experience-panel-fill: 0%;
   --modern-experience-progress: 0;
   position: relative;
   z-index: 1;
   display: block;
   height: calc(
     var(--modern-experience-viewport) +
-    var(--modern-experience-entrance-travel) +
     var(--modern-experience-timeline-travel)
   );
   min-height: 0;
-  margin-top: calc(-1 * var(--modern-experience-source-overlap));
   isolation: isolate;
   overflow-anchor: none;
-  background: transparent;
-  color: var(--modern-panel);
+  background: var(--modern-panel);
+  color: color-mix(in srgb, var(--modern-panel) var(--modern-experience-panel-fill), var(--modern-ink));
 }
 
 .modern-experience-pin {
@@ -378,13 +372,7 @@ button.modern-window-control:focus-visible {
   grid-template-columns: minmax(4.5rem, 8vw) minmax(0, 1fr);
   width: 100%;
   height: 100%;
-  background: var(--modern-ink);
-  clip-path: inset(0 0 0 var(--modern-experience-content-inset));
-}
-
-.modern-experience-content > .modern-section-index,
-.modern-experience-content > .modern-section-body {
-  transform: translateY(calc((1 - var(--modern-experience-entrance-progress)) * 2rem));
+  background: transparent;
 }
 
 .modern-experience-content > .modern-section-index {
@@ -401,7 +389,7 @@ button.modern-window-control:focus-visible {
 .modern-experience-section .modern-section-label {
   flex: 0 0 auto;
   margin-bottom: var(--modern-space-3);
-  color: var(--modern-accent-gold);
+  color: color-mix(in srgb, var(--modern-accent-gold) var(--modern-experience-panel-fill), var(--modern-ink));
 }
 
 .modern-experience-panels {
@@ -420,11 +408,13 @@ button.modern-window-control:focus-visible {
   min-width: 0;
   min-height: 0;
   pointer-events: none;
+  visibility: hidden;
 }
 
 .modern-experience-panel.is-active {
   z-index: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .modern-experience-art-layer {
@@ -505,7 +495,7 @@ button.modern-window-control:focus-visible {
   flex-direction: column;
   justify-content: flex-end;
   padding: clamp(1rem, 2vw, 2rem);
-  background: var(--modern-accent-pink);
+  background: color-mix(in srgb, var(--modern-accent-pink) var(--modern-experience-panel-fill), var(--modern-panel));
 }
 
 .modern-experience-panel-kicker {
@@ -562,7 +552,7 @@ button.modern-window-control:focus-visible {
   flex-direction: column;
   justify-content: space-between;
   padding: clamp(1rem, 2vw, 2rem);
-  background: var(--modern-accent-green);
+  background: color-mix(in srgb, var(--modern-accent-green) var(--modern-experience-panel-fill), var(--modern-panel));
 }
 
 .modern-experience-arrows {
@@ -625,6 +615,7 @@ button.modern-window-control:focus-visible {
   border: var(--modern-border-width) solid var(--modern-ink);
   border-right: 0;
   background: transparent;
+  transition: background-color 400ms ease;
 }
 
 .modern-experience-progress span:last-child {
@@ -638,7 +629,7 @@ button.modern-window-control:focus-visible {
 .modern-experience-copy-panel {
   padding: clamp(1rem, 2vw, 2rem);
   overflow: auto;
-  background: var(--modern-accent-gold);
+  background: color-mix(in srgb, var(--modern-accent-gold) var(--modern-experience-panel-fill), var(--modern-panel));
   scrollbar-color: var(--modern-ink) transparent;
   scrollbar-width: thin;
 }
@@ -684,7 +675,7 @@ button.modern-window-control:focus-visible {
 .modern-experience-art-panel {
   position: relative;
   overflow: hidden;
-  background: var(--modern-ink);
+  background: color-mix(in srgb, var(--modern-ink) var(--modern-experience-panel-fill), var(--modern-panel));
   color: var(--modern-panel);
 }
 
@@ -1387,6 +1378,7 @@ button.modern-window-control:focus-visible {
     grid-template-rows: auto;
     gap: var(--modern-space-3);
     pointer-events: auto;
+    visibility: visible;
   }
 
   .modern-experience-art-layer {
@@ -1548,6 +1540,10 @@ button.modern-window-control:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .modern-experience-progress span {
+    transition: none;
+  }
+
   .modern-about-experience-flow > .modern-hero-section {
     position: relative;
     top: 0;

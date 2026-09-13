@@ -12,9 +12,12 @@ interface ExperienceSectionProps {
 type ExperienceStyle = CSSProperties & {
   "--modern-experience-count": number
   "--modern-experience-segment-count": number
+  "--modern-experience-panel-fill": string
 }
 
 const PROGRESS_SEGMENTS_PER_EXPERIENCE = 5
+const ENTRANCE_DURATION_MS = 1000
+const ENTRANCE_GESTURE_IDLE_MS = 160
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value))
@@ -31,7 +34,6 @@ function getOrganizationMark(organization: string) {
 export function ExperienceSection({ experience }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const scrollRootRef = useRef<HTMLElement | null>(null)
-  const entranceTravelRef = useRef(0)
   const timelineTravelRef = useRef(0)
   const [activeIndex, setActiveIndex] = useState(0)
   const [entranceProgress, setEntranceProgress] = useState(0)
@@ -54,53 +56,58 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
     const scrollRoot = section?.closest<HTMLElement>(".modern-main")
     if (!section || !scrollRoot || experienceCount === 0 || isCompact) return
 
-    const flow = section.parentElement
-    const sourceSection = flow?.querySelector<HTMLElement>(".modern-hero-section")
     scrollRootRef.current = scrollRoot
     let animationFrame = 0
+    let entranceFrame = 0
+    let entranceStarted = false
+    let entranceGestureActive = false
+    let lastEntranceWheelTime = -Infinity
+
+    const playEntrance = () => {
+      if (entranceStarted) return
+      entranceStarted = true
+      if (reducedMotion) {
+        setEntranceProgress(1)
+        return
+      }
+
+      const startTime = window.performance.now()
+      const advanceEntrance = (time: number) => {
+        const progress = clamp((time - startTime) / ENTRANCE_DURATION_MS, 0, 1)
+        setEntranceProgress(progress)
+        entranceFrame = progress < 1
+          ? window.requestAnimationFrame(advanceEntrance)
+          : 0
+      }
+      entranceFrame = window.requestAnimationFrame(advanceEntrance)
+    }
 
     const updateActiveExperience = () => {
       animationFrame = 0
       const rootRect = scrollRoot.getBoundingClientRect()
       const sectionRect = section.getBoundingClientRect()
       const sectionTop = scrollRoot.scrollTop + sectionRect.top - rootRect.top
-      const localOffset = Math.max(0, scrollRoot.scrollTop - sectionTop)
-      const entranceTravel = entranceTravelRef.current
+      const localOffset = scrollRoot.scrollTop - sectionTop
       const timelineTravel = Math.max(1, timelineTravelRef.current)
-      const nextEntranceProgress = entranceTravel === 0
-        ? 1
-        : clamp(localOffset / entranceTravel, 0, 1)
-      const progress = clamp(
-        (localOffset - entranceTravel) / timelineTravel,
-        0,
-        1,
-      )
+
+      // The section arrives in normal document flow. Once pinned, its color
+      // and pixel treatment plays on a clock; scrolling never scrubs it.
+      if (localOffset >= -1) playEntrance()
+      else if (localOffset < -scrollRoot.clientHeight && entranceStarted) {
+        if (entranceFrame) window.cancelAnimationFrame(entranceFrame)
+        entranceFrame = 0
+        entranceStarted = false
+        entranceGestureActive = false
+        setEntranceProgress(0)
+      }
+
+      const progress = clamp(localOffset / timelineTravel, 0, 1)
       const nextIndex = clamp(
         Math.floor(progress * experienceCount),
         0,
         Math.max(0, experienceCount - 1),
       )
-
-      section.style.setProperty(
-        "--modern-experience-entrance-progress",
-        String(nextEntranceProgress),
-      )
-      // The content follows only behind fully filled pixel columns. The final
-      // left-edge strip opens once every cell is opaque, before the handoff.
-      const contentReveal = nextEntranceProgress < 0.952
-        ? clamp((nextEntranceProgress - 0.24) / 0.82, 0, 1)
-        : 0.8683 + ((nextEntranceProgress - 0.952) / 0.048) * 0.1317
-      section.style.setProperty(
-        "--modern-experience-content-inset",
-        `${(1 - contentReveal) * 100}%`,
-      )
       section.style.setProperty("--modern-experience-progress", String(progress))
-      if (sourceSection) sourceSection.inert = localOffset > 0
-      setEntranceProgress((current) => (
-        Math.abs(current - nextEntranceProgress) > 0.0005
-          ? nextEntranceProgress
-          : current
-      ))
       setActiveIndex((current) => current === nextIndex ? current : nextIndex)
       setScrollProgress((current) => Math.abs(current - progress) > 0.002 ? progress : current)
     }
@@ -111,29 +118,49 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
       }
     }
 
+    const handleEntranceWheel = (event: WheelEvent) => {
+      if (reducedMotion || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+
+      const now = window.performance.now()
+      if (entranceGestureActive) {
+        const gestureFinished = !entranceFrame &&
+          now - lastEntranceWheelTime >= ENTRANCE_GESTURE_IDLE_MS
+        if (event.deltaY < 0 || gestureFinished) {
+          entranceGestureActive = false
+        } else {
+          // Keep the initiating flick, including its momentum after playback,
+          // out of the experience timeline. A fresh gesture resumes scrolling.
+          event.preventDefault()
+          lastEntranceWheelTime = now
+          return
+        }
+      }
+      if (entranceStarted || event.deltaY <= 0) return
+
+      const sectionTop = scrollRoot.scrollTop +
+        section.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top
+      const delta = event.deltaY * (event.deltaMode === 1
+        ? 16
+        : event.deltaMode === 2 ? scrollRoot.clientHeight : 1)
+      if (scrollRoot.scrollTop > sectionTop + 1 || scrollRoot.scrollTop + delta < sectionTop) return
+
+      // Spend only enough of this scroll to reach the pin position. Its excess
+      // must not fill progress segments before the entrance has even finished.
+      event.preventDefault()
+      entranceGestureActive = true
+      lastEntranceWheelTime = now
+      scrollRoot.scrollTo({ top: sectionTop, behavior: "instant" })
+      playEntrance()
+      scheduleUpdate()
+    }
+
     const updateMetrics = () => {
       const viewportHeight = scrollRoot.clientHeight
       const stepDistance = Math.max(520, viewportHeight * 0.82)
-      const entranceTravel = reducedMotion
-        ? 0
-        : Math.max(560, viewportHeight * 0.95)
       const timelineTravel = stepDistance * experienceCount
-
-      entranceTravelRef.current = entranceTravel
       timelineTravelRef.current = timelineTravel
-
       section.style.setProperty("--modern-experience-viewport", `${viewportHeight}px`)
-      section.style.setProperty("--modern-experience-entrance-travel", `${entranceTravel}px`)
       section.style.setProperty("--modern-experience-timeline-travel", `${timelineTravel}px`)
-      section.style.setProperty(
-        "--modern-experience-source-overlap",
-        `${reducedMotion ? 0 : Math.min(viewportHeight, sourceSection?.offsetHeight ?? 0)}px`,
-      )
-      flow?.style.setProperty(
-        "--modern-hero-pin-top",
-        `${Math.min(0, viewportHeight - (sourceSection?.offsetHeight ?? 0))}px`,
-      )
-      section.dataset.navigationOffset = String(entranceTravel)
       scheduleUpdate()
     }
 
@@ -142,8 +169,8 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
       const sectionTop = scrollRoot.scrollTop +
         section.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top
       scrollRoot.scrollTo({
-        top: sectionTop + entranceTravelRef.current,
-        behavior: "auto",
+        top: sectionTop,
+        behavior: "instant",
       })
     }
 
@@ -151,20 +178,21 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
     navigateFromHash()
     updateActiveExperience()
     scrollRoot.addEventListener("scroll", scheduleUpdate, { passive: true })
+    scrollRoot.addEventListener("wheel", handleEntranceWheel, { passive: false })
     window.addEventListener("resize", updateMetrics)
     window.addEventListener("hashchange", navigateFromHash)
     const resizeObserver = new ResizeObserver(updateMetrics)
     resizeObserver.observe(scrollRoot)
-    if (sourceSection) resizeObserver.observe(sourceSection)
+    if (section.previousElementSibling) resizeObserver.observe(section.previousElementSibling)
 
     return () => {
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
+      if (entranceFrame) window.cancelAnimationFrame(entranceFrame)
       scrollRoot.removeEventListener("scroll", scheduleUpdate)
+      scrollRoot.removeEventListener("wheel", handleEntranceWheel)
       window.removeEventListener("resize", updateMetrics)
       window.removeEventListener("hashchange", navigateFromHash)
       resizeObserver.disconnect()
-      if (sourceSection) sourceSection.inert = false
-      delete section.dataset.navigationOffset
       scrollRootRef.current = null
     }
   }, [experienceCount, isCompact, reducedMotion])
@@ -178,14 +206,13 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
     const rootRect = scrollRoot.getBoundingClientRect()
     const sectionRect = section.getBoundingClientRect()
     const sectionTop = scrollRoot.scrollTop + sectionRect.top - rootRect.top
-    const entranceTravel = entranceTravelRef.current
     const timelineTravel = timelineTravelRef.current
     const stepProgress = nextIndex / experienceCount
     const targetOffset = requestedIndex < 0
       ? 0
       : requestedIndex >= experienceCount
-        ? entranceTravel + timelineTravel + scrollRoot.clientHeight
-        : entranceTravel + timelineTravel * stepProgress
+        ? timelineTravel + scrollRoot.clientHeight
+        : timelineTravel * stepProgress
 
     scrollRoot.scrollTo({
       top: sectionTop + targetOffset,
@@ -224,6 +251,7 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
   const style = {
     "--modern-experience-count": experienceCount,
     "--modern-experience-segment-count": progressSegmentCount,
+    "--modern-experience-panel-fill": `${clamp((visibleEntranceProgress - 0.08) / 0.28, 0, 1) * 100}%`,
   } as ExperienceStyle
 
   return (
@@ -240,13 +268,10 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
       <div className={`modern-experience-pin${visibleEntranceProgress >= 0.999 ? " is-entered" : ""}`}>
         <PixelCanvas
           className="modern-experience-takeover"
-          progress={visibleEntranceProgress}
+          progress={clamp((visibleEntranceProgress - 0.22) / 0.78, 0, 1)}
           variant="takeover"
         />
-        <div
-          className="modern-experience-content"
-          inert={visibleEntranceProgress < 0.999 ? true : undefined}
-        >
+        <div className="modern-experience-content">
         <div className="modern-section-index" aria-hidden="true">02</div>
 
         <div className="modern-section-body">
@@ -360,6 +385,7 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
                     <PixelCanvas
                       className="modern-experience-entry-mark"
                       variant="mark"
+                      progress={clamp((visibleEntranceProgress - 0.08) / 0.28, 0, 1)}
                       mark={getOrganizationMark(item.organization)}
                     />
                   </div>
@@ -371,6 +397,7 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
               <div className="modern-experience-art-panel modern-experience-art-panel--persistent">
                 <PixelCanvas
                   variant="mark"
+                  progress={clamp((visibleEntranceProgress - 0.08) / 0.28, 0, 1)}
                   mark={getOrganizationMark(experience[activeIndex].organization)}
                 />
               </div>
