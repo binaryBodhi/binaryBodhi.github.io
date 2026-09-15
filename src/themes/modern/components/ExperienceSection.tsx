@@ -37,10 +37,12 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
   const timelineTravelRef = useRef(0)
   const [activeIndex, setActiveIndex] = useState(0)
   const [entranceProgress, setEntranceProgress] = useState(0)
+  const [entranceFrameComplete, setEntranceFrameComplete] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isCompact, setIsCompact] = useState(false)
   const reducedMotion = useReducedMotion()
   const experienceCount = experience.length
+  const handleEntranceComplete = useCallback(() => setEntranceFrameComplete(true), [])
 
   useEffect(() => {
     const compactQuery = window.matchMedia("(max-width: 767px)")
@@ -60,21 +62,29 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
     let animationFrame = 0
     let entranceFrame = 0
     let entranceStarted = false
+    let currentEntranceProgress = 0
+    let reverseStartProgress: number | null = null
     let entranceGestureActive = false
     let lastEntranceWheelTime = -Infinity
 
     const playEntrance = () => {
       if (entranceStarted) return
       entranceStarted = true
+      reverseStartProgress = null
+      setEntranceFrameComplete(false)
       if (reducedMotion) {
+        currentEntranceProgress = 1
         setEntranceProgress(1)
         return
       }
 
+      const startProgress = currentEntranceProgress
+      const duration = Math.max(1, ENTRANCE_DURATION_MS * (1 - startProgress))
       const startTime = window.performance.now()
       const advanceEntrance = (time: number) => {
-        const progress = clamp((time - startTime) / ENTRANCE_DURATION_MS, 0, 1)
-        setEntranceProgress(progress)
+        const progress = clamp((time - startTime) / duration, 0, 1)
+        currentEntranceProgress = startProgress + (1 - startProgress) * progress
+        setEntranceProgress(currentEntranceProgress)
         entranceFrame = progress < 1
           ? window.requestAnimationFrame(advanceEntrance)
           : 0
@@ -90,15 +100,23 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
       const localOffset = scrollRoot.scrollTop - sectionTop
       const timelineTravel = Math.max(1, timelineTravelRef.current)
 
-      // The section arrives in normal document flow. Once pinned, its color
-      // and pixel treatment plays on a clock; scrolling never scrubs it.
+      // Enter on a clock. When returning to the hero, unwind the same sequence
+      // over the first part of the upward scroll, while the panels are visible.
       if (localOffset >= -1) playEntrance()
-      else if (localOffset < -scrollRoot.clientHeight && entranceStarted) {
-        if (entranceFrame) window.cancelAnimationFrame(entranceFrame)
-        entranceFrame = 0
-        entranceStarted = false
-        entranceGestureActive = false
-        setEntranceProgress(0)
+      else if (entranceStarted || reverseStartProgress !== null) {
+        if (entranceStarted) {
+          if (entranceFrame) window.cancelAnimationFrame(entranceFrame)
+          entranceFrame = 0
+          entranceStarted = false
+          entranceGestureActive = false
+          reverseStartProgress = currentEntranceProgress
+        }
+        const reverseTravel = Math.max(180, scrollRoot.clientHeight * 0.45)
+        currentEntranceProgress = (reverseStartProgress ?? 0) *
+          clamp(1 + localOffset / reverseTravel, 0, 1)
+        setEntranceProgress(currentEntranceProgress)
+        setEntranceFrameComplete(false)
+        if (currentEntranceProgress === 0) reverseStartProgress = null
       }
 
       const progress = clamp(localOffset / timelineTravel, 0, 1)
@@ -244,10 +262,12 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
   const visibleEntranceProgress = isCompact || reducedMotion
     ? 1
     : entranceProgress
-  const completedProgressSegments = Math.max(
-    1,
-    Math.ceil(scrollProgress * progressSegmentCount),
-  )
+  // Wait for the canvas to draw its final pixels before starting the bar fade.
+  const entranceComplete = isCompact || reducedMotion ||
+    (entranceFrameComplete && visibleEntranceProgress === 1)
+  const completedProgressSegments = entranceComplete
+    ? Math.max(1, Math.ceil(scrollProgress * progressSegmentCount))
+    : 0
   const style = {
     "--modern-experience-count": experienceCount,
     "--modern-experience-segment-count": progressSegmentCount,
@@ -265,11 +285,12 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
       aria-roledescription="scroll-driven experience timeline"
       onKeyDown={handleSectionKeyDown}
     >
-      <div className={`modern-experience-pin${visibleEntranceProgress >= 0.999 ? " is-entered" : ""}`}>
+      <div className={`modern-experience-pin${entranceComplete ? " is-entered" : ""}`}>
         <PixelCanvas
           className="modern-experience-takeover"
           progress={clamp((visibleEntranceProgress - 0.22) / 0.78, 0, 1)}
           variant="takeover"
+          onComplete={handleEntranceComplete}
         />
         <div className="modern-experience-content">
         <div className="modern-section-index" aria-hidden="true">02</div>
@@ -339,7 +360,7 @@ export function ExperienceSection({ experience }: ExperienceSectionProps) {
                       className="modern-experience-progress"
                       role="progressbar"
                       aria-label={`Experience ${index + 1} of ${experienceCount}`}
-                      aria-valuemin={1}
+                      aria-valuemin={0}
                       aria-valuemax={progressSegmentCount}
                       aria-valuenow={completedProgressSegments}
                     >

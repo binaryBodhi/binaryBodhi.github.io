@@ -12,6 +12,8 @@ export type PixelCanvasVariant =
 interface PixelCanvasProps {
   className?: string
   mark?: string
+  /** Called after the takeover's final, fully opaque frame is drawn. */
+  onComplete?: () => void
   progress?: number
   variant: PixelCanvasVariant
 }
@@ -310,6 +312,7 @@ const drawers = {
 export function PixelCanvas({
   className = "",
   mark = "S",
+  onComplete,
   progress = 1,
   variant,
 }: PixelCanvasProps) {
@@ -348,6 +351,7 @@ export function PixelCanvas({
       const currentProgress = drawOptions.progress()
       if (variant !== "takeover" || currentProgress !== lastTakeoverProgress) {
         drawers[variant](context, width, height, renderTime, drawOptions)
+        if (variant === "takeover" && currentProgress === 1) onComplete?.()
         lastTakeoverProgress = currentProgress
       }
       if (!reducedMotion) frame = window.requestAnimationFrame(render)
@@ -393,7 +397,7 @@ export function PixelCanvas({
       resizeObserver.disconnect()
       visibilityObserver.disconnect()
     }
-  }, [mark, reducedMotion, variant])
+  }, [mark, onComplete, reducedMotion, variant])
 
   return (
     <canvas
