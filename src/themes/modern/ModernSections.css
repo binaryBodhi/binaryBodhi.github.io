@@ -358,13 +358,6 @@ button.modern-window-control:focus-visible {
   background: transparent;
 }
 
-.modern-experience-takeover {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
 .modern-experience-content {
   position: relative;
   z-index: 1;
@@ -377,6 +370,13 @@ button.modern-window-control:focus-visible {
 
 .modern-experience-content > .modern-section-index {
   border-color: rgb(255 255 255 / 35%);
+}
+
+@media (min-width: 768px) {
+  .modern-experience-content > .modern-section-index {
+    color: var(--modern-ink);
+    border-color: var(--modern-border);
+  }
 }
 
 .modern-experience-content > .modern-section-body {
@@ -1344,10 +1344,6 @@ button.modern-window-control:focus-visible {
     min-height: 0;
     overflow: visible;
     background: var(--modern-ink);
-  }
-
-  .modern-experience-takeover {
-    display: none;
   }
 
   .modern-experience-content {

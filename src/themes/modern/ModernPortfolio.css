@@ -1,4 +1,6 @@
 .modern-page {
+  position: relative;
+  isolation: isolate;
   --modern-canvas: #e9e9e6;
   --modern-panel: #ffffff;
   --modern-ink: #111111;
@@ -39,6 +41,13 @@
   font-family: var(--modern-font-body);
 }
 
+.modern-page-takeover {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .modern-page *,
 .modern-page *::before,
 .modern-page *::after {
@@ -71,6 +80,7 @@
 
 .modern-shell {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: var(--modern-space-4);

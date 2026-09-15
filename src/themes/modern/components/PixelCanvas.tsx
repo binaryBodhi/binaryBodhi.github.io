@@ -155,7 +155,7 @@ function drawTakeover(
     return
   }
 
-  // Fine, scattered cells accumulate in the gutters around the panels.
+  // Fine, scattered cells accumulate across the canvas background.
   // There is no directional curtain or movement of the content underneath.
   const cell = 3
   const columns = Math.ceil(width / cell)
@@ -319,11 +319,13 @@ export function PixelCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const previousMarkRef = useRef(mark.toUpperCase().slice(0, 1))
   const progressRef = useRef(progress)
+  const redrawRef = useRef<(() => void) | null>(null)
   const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     progressRef.current = progress
-  }, [progress])
+    if (reducedMotion) redrawRef.current?.()
+  }, [progress, reducedMotion])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -368,6 +370,8 @@ export function PixelCanvas({
       drawers[variant](context, width, height, drawOptions.transitionStart, drawOptions)
     }
 
+    redrawRef.current = () => render(window.performance.now())
+
     const start = () => {
       window.cancelAnimationFrame(frame)
       if (isVisible) frame = window.requestAnimationFrame(render)
@@ -393,6 +397,7 @@ export function PixelCanvas({
 
     return () => {
       disposed = true
+      redrawRef.current = null
       window.cancelAnimationFrame(frame)
       resizeObserver.disconnect()
       visibilityObserver.disconnect()

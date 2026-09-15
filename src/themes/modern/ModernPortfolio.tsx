@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import type { PortfolioData } from "../../data/types"
 import { AboutSection } from "./components/AboutSection"
@@ -6,6 +6,7 @@ import { ContactSection } from "./components/ContactSection"
 import { ExperienceSection } from "./components/ExperienceSection"
 import { HeroSection } from "./components/HeroSection"
 import { ProjectsSection } from "./components/ProjectsSection"
+import { PixelCanvas } from "./components/PixelCanvas"
 import { SkillsSection } from "./components/SkillsSection"
 import { ModernHeader } from "./ModernHeader"
 import { modernNavigationItems } from "./modernNavigation"
@@ -23,6 +24,17 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
     useState<ModernSectionId>("modern-about")
   const [navigationIsOpen, setNavigationIsOpen] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
+  const [takeover, setTakeover] = useState({ progress: 0, visible: false, complete: false })
+  const handleTakeoverChange = useCallback((progress: number, visible: boolean) => {
+    setTakeover((current) => current.progress === progress && current.visible === visible
+      ? current
+      : { progress, visible, complete: current.complete && progress === 1 })
+  }, [])
+  const handleTakeoverComplete = useCallback(() => {
+    setTakeover((current) => current.visible && current.progress === 1 && !current.complete
+      ? { ...current, complete: true }
+      : current)
+  }, [])
 
   useEffect(() => {
     const scrollRoot = mainRef.current
@@ -123,6 +135,12 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
 
   return (
     <div className="modern-page">
+      <PixelCanvas
+        className="modern-page-takeover"
+        variant="takeover"
+        progress={takeover.visible ? takeover.progress : 0}
+        onComplete={handleTakeoverComplete}
+      />
       <a className="modern-skip-link" href="#modern-main">
         Skip to content
       </a>
@@ -150,7 +168,11 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
           >
             <div className="modern-about-experience-flow">
               <HeroSection data={data} />
-              <ExperienceSection experience={data.experience} />
+              <ExperienceSection
+                experience={data.experience}
+                onTakeoverChange={handleTakeoverChange}
+                takeoverComplete={takeover.complete}
+              />
             </div>
             <ProjectsSection projects={data.projects ?? []} />
             <SkillsSection skills={data.skills} />
