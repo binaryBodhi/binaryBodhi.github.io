@@ -188,7 +188,7 @@ activeSection,
         className={`modern-navigation${menuIsOpen ? " is-open" : ""}`}
         aria-label="Modern portfolio navigation"
       >
-        {modernNavigationItems.map((item) => (
+        {modernNavigationItems.filter((item) => item.id !== "modern-about").map((item) => (
           <a
             key={item.id}
             className="modern-nav-link"

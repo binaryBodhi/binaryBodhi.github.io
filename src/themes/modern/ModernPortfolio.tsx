@@ -8,6 +8,7 @@ import { HeroSection } from "./components/HeroSection"
 import { ProjectsSection } from "./components/ProjectsSection"
 import { PixelCanvas } from "./components/PixelCanvas"
 import { SkillsSection } from "./components/SkillsSection"
+import { useInertialScroll } from "./components/useInertialScroll"
 import { ModernHeader } from "./ModernHeader"
 import { modernNavigationItems } from "./modernNavigation"
 import type { ModernSectionId } from "./modernNavigation"
@@ -20,10 +21,22 @@ interface ModernPortfolioProps {
 }
 
 export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
-  const [activeSection, setActiveSection] =
-    useState<ModernSectionId>("modern-about")
+  const [activeSection, setActiveSection] = useState<ModernSectionId>("modern-about")
   const [navigationIsOpen, setNavigationIsOpen] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
+  const pauseAtExperience = useCallback((from: number, to: number) => {
+    if (to <= from || window.matchMedia("(max-width: 767px)").matches) return null
+    const scrollRoot = mainRef.current
+    const experience = scrollRoot?.querySelector<HTMLElement>("#modern-experience")
+    if (!scrollRoot || !experience) return null
+
+    const pinPosition = scrollRoot.scrollTop + experience.getBoundingClientRect().top -
+      scrollRoot.getBoundingClientRect().top
+    // Browsers can round scrollTop below the fractional section position.
+    // Once within the entrance's one-pixel tolerance, let the timeline advance.
+    return from < pinPosition - 1 && to >= pinPosition ? pinPosition : null
+  }, [])
+  const stopScrollInertia = useInertialScroll(mainRef, navigationIsOpen, pauseAtExperience)
   const [takeover, setTakeover] = useState({ progress: 0, visible: false, complete: false })
   const handleTakeoverChange = useCallback((progress: number, visible: boolean) => {
     setTakeover((current) => current.progress === progress && current.visible === visible
@@ -82,6 +95,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
   }, [])
 
   const navigateToSection = (sectionId: ModernSectionId) => {
+    stopScrollInertia()
     const scrollRoot = mainRef.current
     const section = document.getElementById(sectionId)
     if (!scrollRoot || !section) return
@@ -170,6 +184,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
               <HeroSection data={data} />
               <ExperienceSection
                 experience={data.experience}
+                onEntranceStart={stopScrollInertia}
                 onTakeoverChange={handleTakeoverChange}
                 takeoverComplete={takeover.complete}
               />

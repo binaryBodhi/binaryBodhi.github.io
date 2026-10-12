@@ -1,6 +1,8 @@
 import { useRef, useState } from "react"
 import type { PortfolioData } from "../../../data/types"
 import { PixelCanvas } from "./PixelCanvas"
+import { LifeControls } from "./LifeControls"
+import { DEFAULT_LIFE_SETTINGS } from "./gameOfLife"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 import { WindowPanel } from "./WindowPanel"
@@ -9,30 +11,18 @@ interface HeroSectionProps {
   data: PortfolioData
 }
 
-function ExternalLink({ label, url }: { label: string; url: string }) {
-  const isEmail = url.startsWith("mailto:")
-  return (
-    <a
-      className="modern-action"
-      href={url}
-      target={isEmail ? undefined : "_blank"}
-      rel={isEmail ? undefined : "noreferrer"}
-    >
-      <span>{label}</span>
-      <span aria-hidden="true">↗</span>
-    </a>
-  )
-}
-
 export function HeroSection({ data }: HeroSectionProps) {
   const heroGridRef = useRef<HTMLDivElement>(null)
   const [terminalIsOpen, setTerminalIsOpen] = useState(true)
+  const [lifeSettings, setLifeSettings] = useState(() => ({
+    ...DEFAULT_LIFE_SETTINGS,
+    paused: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  }))
   const headlineParts = data.profile.headline
-    .split(/\s*\|\s*/)
+    .split(/(?<=,)\s+|\s*\|\s*/)
     .filter(Boolean)
   const currentExperience = data.experience.find((item) => !item.period.end)
   const primarySkills = data.skills.flatMap((group) => group.skills).slice(0, 6)
-  const emailLink = data.profile.email ? `mailto:${data.profile.email}` : null
 
   return (
     <SectionFrame
@@ -43,22 +33,27 @@ export function HeroSection({ data }: HeroSectionProps) {
       className="modern-hero-section"
     >
       <div ref={heroGridRef} className="modern-hero-grid">
-        <Reveal className="modern-hero-heading-wrap">
-          <p className="modern-kicker">Portfolio of {data.profile.name}</p>
-          <h1 id="modern-about-title" tabIndex={-1}>
-            {headlineParts.map((part) => (
-              <span key={part}>{part}</span>
-            ))}
-          </h1>
-        </Reveal>
-
-        <Reveal className="modern-hero-art" delay={90}>
-          <PixelCanvas variant="hero" />
-          <div className="modern-canvas-caption">
-            <span>Generative signal</span>
-            <span aria-hidden="true">LIVE</span>
+        <div className="modern-hero-heading-frame">
+          <div className="modern-hero-background" aria-hidden="true">
+            <PixelCanvas variant="hero" lifeSettings={lifeSettings} />
           </div>
-        </Reveal>
+          {currentExperience && (
+            <div className="modern-hero-now-building modern-side-widget modern-side-widget--gold">
+              <span className="modern-widget-key" aria-hidden="true">N</span>
+              <div>
+                <strong>Now building</strong>
+                <span>{currentExperience.organization}</span>
+              </div>
+            </div>
+          )}
+          <Reveal className="modern-hero-heading-wrap">
+            <h1 id="modern-about-title" tabIndex={-1}>
+              {headlineParts.map((part) => (
+                <span key={part}>{part}</span>
+              ))}
+            </h1>
+          </Reveal>
+        </div>
 
         {terminalIsOpen && (
           <Reveal className="modern-hero-terminal" delay={140}>
@@ -76,26 +71,12 @@ export function HeroSection({ data }: HeroSectionProps) {
                 <p><span>$</span> toolchain --summary</p>
                 <p>{primarySkills.join(" / ")}</p>
               </div>
-              <div className="modern-terminal-actions">
-                {data.socialLinks.map((link) => (
-                  <ExternalLink key={link.id} label={link.label} url={link.url} />
-                ))}
-                {emailLink && <ExternalLink label="Email" url={emailLink} />}
-              </div>
             </WindowPanel>
           </Reveal>
         )}
 
         <Reveal className="modern-hero-widgets" delay={180}>
-          {currentExperience && (
-            <div className="modern-side-widget modern-side-widget--gold">
-              <span className="modern-widget-key" aria-hidden="true">N</span>
-              <div>
-                <strong>Now building</strong>
-                <span>{currentExperience.organization}</span>
-              </div>
-            </div>
-          )}
+          <LifeControls settings={lifeSettings} onChange={setLifeSettings} />
           {data.profile.location && (
             <div className="modern-side-widget modern-side-widget--blue">
               <span className="modern-widget-key" aria-hidden="true">L</span>

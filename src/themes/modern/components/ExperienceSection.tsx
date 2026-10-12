@@ -7,6 +7,7 @@ import { useReducedMotion } from "./useReducedMotion"
 
 interface ExperienceSectionProps {
   experience: Experience[]
+  onEntranceStart: () => void
   onTakeoverChange: (progress: number, visible: boolean) => void
   takeoverComplete: boolean
 }
@@ -19,7 +20,6 @@ type ExperienceStyle = CSSProperties & {
 
 const PROGRESS_SEGMENTS_PER_EXPERIENCE = 5
 const ENTRANCE_DURATION_MS = 1000
-const ENTRANCE_GESTURE_IDLE_MS = 160
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value))
@@ -33,7 +33,7 @@ function getOrganizationMark(organization: string) {
     .toUpperCase()
 }
 
-export function ExperienceSection({ experience, onTakeoverChange, takeoverComplete }: ExperienceSectionProps) {
+export function ExperienceSection({ experience, onEntranceStart, onTakeoverChange, takeoverComplete }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const scrollRootRef = useRef<HTMLElement | null>(null)
   const timelineTravelRef = useRef(0)
@@ -56,15 +56,13 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
   useEffect(() => {
     const section = sectionRef.current
     const scrollRoot = section?.closest<HTMLElement>(".modern-main")
-    if (!section || !scrollRoot || experienceCount === 0 || isCompact) return
+    if (!section || !scrollRoot || experienceCount === 0) return
 
     scrollRootRef.current = scrollRoot
     let animationFrame = 0
     let entranceFrame = 0
     let entranceStarted = false
     let currentEntranceProgress = 0
-    let entranceGestureActive = false
-    let lastEntranceWheelTime = -Infinity
     const publishTakeover = () => {
       onTakeoverChange(
         clamp((currentEntranceProgress - 0.22) / 0.78, 0, 1),
@@ -74,10 +72,10 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
 
     const playTransition = (target: 0 | 1) => {
       if (entranceStarted === (target === 1)) return
+      if (target === 1 && !isCompact) onEntranceStart()
       entranceStarted = target === 1
       if (entranceFrame) window.cancelAnimationFrame(entranceFrame)
       entranceFrame = 0
-      if (target === 0) entranceGestureActive = false
       if (reducedMotion) {
         currentEntranceProgress = target
         if (target === 1) setEntranceProgress(1)
@@ -108,6 +106,14 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
       animationFrame = 0
       const rootRect = scrollRoot.getBoundingClientRect()
       const sectionRect = section.getBoundingClientRect()
+      if (isCompact) {
+        // Phones use a natural list rather than a pinned timeline. Start the
+        // same background reveal as Experience enters the reading area.
+        const activationLine = rootRect.top + scrollRoot.clientHeight * 0.3
+        playTransition(sectionRect.top <= activationLine && sectionRect.bottom > rootRect.top ? 1 : 0)
+        publishTakeover()
+        return
+      }
       const sectionTop = scrollRoot.scrollTop + sectionRect.top - rootRect.top
       const localOffset = scrollRoot.scrollTop - sectionTop
       const timelineTravel = Math.max(1, timelineTravelRef.current)
@@ -137,42 +143,33 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
     }
 
     const handleEntranceWheel = (event: WheelEvent) => {
-      if (reducedMotion || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+      if (isCompact || reducedMotion || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
 
-      const now = window.performance.now()
-      if (entranceGestureActive) {
-        const gestureFinished = !entranceFrame &&
-          now - lastEntranceWheelTime >= ENTRANCE_GESTURE_IDLE_MS
-        if (event.deltaY < 0 || gestureFinished) {
-          entranceGestureActive = false
-        } else {
-          // Keep the initiating flick, including its momentum after playback,
-          // out of the experience timeline. A fresh gesture resumes scrolling.
-          event.preventDefault()
-          lastEntranceWheelTime = now
-          return
-        }
+      if (entranceStarted && entranceFrame && event.deltaY > 0) {
+        // Hold only during playback. Continuous wheel input must be allowed
+        // to advance the timeline as soon as the entrance finishes.
+        event.preventDefault()
+        return
       }
       if (entranceStarted || event.deltaY <= 0) return
 
       const sectionTop = scrollRoot.scrollTop +
         section.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top
-      const delta = event.deltaY * (event.deltaMode === 1
-        ? 16
-        : event.deltaMode === 2 ? scrollRoot.clientHeight : 1)
-      if (scrollRoot.scrollTop > sectionTop + 1 || scrollRoot.scrollTop + delta < sectionTop) return
+      if (Math.abs(scrollRoot.scrollTop - sectionTop) > 1) return
 
-      // Spend only enough of this scroll to reach the pin position. Its excess
-      // must not fill progress segments before the entrance has even finished.
+      // The scrolling controller eases to the pin before pausing. Do not snap
+      // here based on a raw wheel delta that has not yet been rendered.
       event.preventDefault()
-      entranceGestureActive = true
-      lastEntranceWheelTime = now
       scrollRoot.scrollTo({ top: sectionTop, behavior: "instant" })
       playTransition(1)
       scheduleUpdate()
     }
 
     const updateMetrics = () => {
+      if (isCompact) {
+        scheduleUpdate()
+        return
+      }
       const viewportHeight = scrollRoot.clientHeight
       const stepDistance = Math.max(520, viewportHeight * 0.82)
       const timelineTravel = stepDistance * experienceCount
@@ -183,7 +180,7 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
     }
 
     const navigateFromHash = () => {
-      if (window.location.hash !== "#modern-experience") return
+      if (isCompact || window.location.hash !== "#modern-experience") return
       const sectionTop = scrollRoot.scrollTop +
         section.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top
       scrollRoot.scrollTo({
@@ -201,6 +198,7 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
     window.addEventListener("hashchange", navigateFromHash)
     const resizeObserver = new ResizeObserver(updateMetrics)
     resizeObserver.observe(scrollRoot)
+    if (isCompact) resizeObserver.observe(section)
     if (section.previousElementSibling) resizeObserver.observe(section.previousElementSibling)
 
     return () => {
@@ -214,7 +212,7 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
       scrollRootRef.current = null
       onTakeoverChange(0, false)
     }
-  }, [experienceCount, isCompact, reducedMotion, onTakeoverChange])
+  }, [experienceCount, isCompact, reducedMotion, onEntranceStart, onTakeoverChange])
 
   const scrollToExperience = useCallback((requestedIndex: number) => {
     const section = sectionRef.current
@@ -260,7 +258,7 @@ export function ExperienceSection({ experience, onTakeoverChange, takeoverComple
   if (experienceCount === 0) return null
 
   const progressSegmentCount = experienceCount * PROGRESS_SEGMENTS_PER_EXPERIENCE
-  const visibleEntranceProgress = isCompact || reducedMotion
+  const visibleEntranceProgress = reducedMotion
     ? 1
     : entranceProgress
   // Wait for the canvas to draw its final pixels before starting the bar fade.

@@ -8,7 +8,7 @@ import type { PortfolioData } from './types'
 export const portfolioData = {
   profile: {
     name: 'Shantanu Kshatriya',
-    headline: 'Full-stack Software Developer | Machine learning enthusiast',
+    headline: 'Complex systems, simple solutions.',
     biography: ["I am batman"],
     email: "shantanu.kx@gmail.com"
   },

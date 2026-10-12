@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import { useReducedMotion } from "./useReducedMotion"
+import { createLifeGrid, DEFAULT_LIFE_SETTINGS, stepLifeGrid, type LifeSettings } from "./gameOfLife"
 
 export type PixelCanvasVariant =
   | "hero"
@@ -11,6 +12,7 @@ export type PixelCanvasVariant =
 
 interface PixelCanvasProps {
   className?: string
+  lifeSettings?: LifeSettings
   mark?: string
   /** Called after the takeover's final, fully opaque frame is drawn. */
   onComplete?: () => void
@@ -23,6 +25,18 @@ interface DrawOptions {
   mark: string
   progress: () => number
   transitionStart: number
+  lifeSettings: () => LifeSettings
+  life: {
+    columns: number
+    rows: number
+    cells: Uint8Array
+    next: Uint8Array
+    lastStepTime: number
+    seedPercent: number
+    restartToken: number
+    paused: boolean
+    generationsPerSecond: number
+  } | null
 }
 
 function pseudoRandom(x: number, y: number) {
@@ -35,23 +49,47 @@ function drawHero(
   width: number,
   height: number,
   time: number,
+  options: DrawOptions,
 ) {
   const cell = Math.max(7, Math.min(13, Math.floor(width / 42)))
   const columns = Math.ceil(width / cell)
   const rows = Math.ceil(height / cell)
-  const centerX = columns * 0.55 + Math.sin(time * 0.00035) * columns * 0.1
-  const centerY = rows * 0.46 + Math.cos(time * 0.00028) * rows * 0.08
+  const settings = options.lifeSettings()
+  if (!options.life || options.life.columns !== columns || options.life.rows !== rows
+    || options.life.seedPercent !== settings.seedPercent || options.life.restartToken !== settings.restartToken) {
+    options.life = {
+      columns,
+      rows,
+      cells: createLifeGrid(columns, rows, settings.seedPercent),
+      next: new Uint8Array(columns * rows),
+      lastStepTime: time,
+      seedPercent: settings.seedPercent,
+      restartToken: settings.restartToken,
+      paused: settings.paused,
+      generationsPerSecond: settings.generationsPerSecond,
+    }
+  }
+  const life = options.life
+  if (life.paused !== settings.paused || life.generationsPerSecond !== settings.generationsPerSecond) {
+    life.lastStepTime = time
+    life.paused = settings.paused
+    life.generationsPerSecond = settings.generationsPerSecond
+  }
+  // Resume with one step after an offscreen pause rather than rushing to catch up.
+  if (!settings.paused && time - life.lastStepTime >= 1000 / settings.generationsPerSecond) {
+    stepLifeGrid(life.cells, life.next, columns, rows)
+    const previous = life.cells
+    life.cells = life.next
+    life.next = previous
+    life.lastStepTime = time
+  }
 
-  context.fillStyle = "#f8f8f5"
+  context.fillStyle = "#f2f0e9"
   context.fillRect(0, 0, width, height)
 
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
-      const distance = Math.hypot(column - centerX, row - centerY)
-      const wave = Math.sin(distance * 0.82 - time * 0.0022)
-      const noise = pseudoRandom(column, row)
-      const threshold = 0.3 + noise * 0.48
-      if (wave < threshold) continue
+      if (life.cells[row * columns + column] === 0) continue
 
       const accent = (column + row) % 17 === 0
       context.fillStyle = accent ? "#c6a348" : "#111111"
@@ -311,6 +349,7 @@ const drawers = {
 
 export function PixelCanvas({
   className = "",
+  lifeSettings,
   mark = "S",
   onComplete,
   progress = 1,
@@ -319,8 +358,14 @@ export function PixelCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const previousMarkRef = useRef(mark.toUpperCase().slice(0, 1))
   const progressRef = useRef(progress)
+  const lifeSettingsRef = useRef(lifeSettings)
   const redrawRef = useRef<(() => void) | null>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    lifeSettingsRef.current = lifeSettings
+    redrawRef.current?.()
+  }, [lifeSettings])
 
   useEffect(() => {
     progressRef.current = progress
@@ -344,19 +389,22 @@ export function PixelCanvas({
       mark: nextMark,
       progress: () => progressRef.current,
       transitionStart: window.performance.now(),
+      lifeSettings: () => lifeSettingsRef.current ?? { ...DEFAULT_LIFE_SETTINGS, paused: reducedMotion },
+      life: null,
     }
     previousMarkRef.current = nextMark
 
     const render = (time: number) => {
       if (disposed || !isVisible) return
-      const renderTime = reducedMotion ? drawOptions.transitionStart + 720 : time
+      const renderTime = reducedMotion && variant !== "hero" ? drawOptions.transitionStart + 720 : time
       const currentProgress = drawOptions.progress()
       if (variant !== "takeover" || currentProgress !== lastTakeoverProgress) {
         drawers[variant](context, width, height, renderTime, drawOptions)
         if (variant === "takeover" && currentProgress === 1) onComplete?.()
         lastTakeoverProgress = currentProgress
       }
-      if (!reducedMotion) frame = window.requestAnimationFrame(render)
+      const animate = variant === "hero" ? !drawOptions.lifeSettings().paused : !reducedMotion
+      if (animate) frame = window.requestAnimationFrame(render)
     }
 
     const resize = () => {
@@ -367,10 +415,13 @@ export function PixelCanvas({
       canvas.width = Math.max(1, Math.round(width * pixelRatio))
       canvas.height = Math.max(1, Math.round(height * pixelRatio))
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-      drawers[variant](context, width, height, drawOptions.transitionStart, drawOptions)
+      drawers[variant](context, width, height, variant === "hero" ? window.performance.now() : drawOptions.transitionStart, drawOptions)
     }
 
-    redrawRef.current = () => render(window.performance.now())
+    redrawRef.current = () => {
+      window.cancelAnimationFrame(frame)
+      render(window.performance.now())
+    }
 
     const start = () => {
       window.cancelAnimationFrame(frame)
