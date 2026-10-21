@@ -533,6 +533,11 @@ button.modern-window-control:focus-visible {
     background: transparent;
     border-color: transparent;
   }
+
+  /* Draw constant labels and controls once, without blending duplicate copies. */
+  .modern-experience-panel:not(.is-active) .modern-experience-static {
+    visibility: hidden;
+  }
 }
 
 .modern-experience-art-layer > .modern-experience-art-panel {
@@ -550,9 +555,7 @@ button.modern-window-control:focus-visible {
   color: var(--modern-ink);
 }
 
-.modern-experience-heading-panel > *,
-.modern-experience-navigation-panel > *,
-.modern-experience-copy-panel > *,
+.modern-experience-morph,
 .modern-experience-art-panel > .modern-pixel-canvas {
   opacity: var(--modern-experience-weight, 1);
   transform:
@@ -604,6 +607,10 @@ button.modern-window-control:focus-visible {
   font-family: var(--modern-font-display);
   font-size: clamp(1.6rem, 3vw, 3.2rem);
   line-height: 1;
+}
+
+.modern-experience-panel-number > .modern-experience-morph {
+  display: inline-block;
 }
 
 .modern-experience-heading-panel h3,
@@ -1459,9 +1466,7 @@ button.modern-window-control:focus-visible {
     display: block;
   }
 
-  .modern-experience-panel .modern-experience-heading-panel > *,
-  .modern-experience-panel .modern-experience-navigation-panel > *,
-  .modern-experience-panel .modern-experience-copy-panel > *,
+  .modern-experience-panel .modern-experience-morph,
   .modern-experience-panel .modern-experience-art-panel > .modern-pixel-canvas {
     opacity: 1;
     transform: none;
@@ -1638,9 +1643,7 @@ button.modern-window-control:focus-visible {
     transform: none;
   }
 
-  .modern-experience-heading-panel > *,
-  .modern-experience-navigation-panel > *,
-  .modern-experience-copy-panel > *,
+  .modern-experience-morph,
   .modern-experience-art-panel > .modern-pixel-canvas {
     transition: none;
   }

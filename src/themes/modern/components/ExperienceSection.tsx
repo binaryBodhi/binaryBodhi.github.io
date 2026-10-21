@@ -324,18 +324,19 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
                   inert={!isCompact && !isActive ? true : undefined}
                 >
                   <header className={`modern-experience-heading-panel${item.role.length > 22 ? " has-long-title" : ""}`}>
-                    <div className="modern-experience-panel-kicker">
+                    <div className="modern-experience-panel-kicker modern-experience-static">
                       <span>02</span>
                       <span>Experience</span>
                     </div>
                     <span className="modern-experience-panel-number" aria-hidden="true">
-                      02.{index + 1}
+                      <span className="modern-experience-static">02</span>
+                      <span className="modern-experience-morph">.{index + 1}</span>
                     </span>
-                    <h3>{item.role}</h3>
-                    <p>{item.organization}</p>
+                    <h3 className="modern-experience-morph">{item.role}</h3>
+                    <p className="modern-experience-morph">{item.organization}</p>
                   </header>
 
-                  <div className="modern-experience-navigation-panel" aria-label="Experience controls">
+                  <div className="modern-experience-navigation-panel modern-experience-static" aria-label="Experience controls">
                     <div className="modern-experience-arrows">
                       <button
                         type="button"
@@ -385,17 +386,17 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
                   </div>
 
                   <div className="modern-experience-copy-panel">
-                    <div className="modern-experience-meta">
+                    <div className="modern-experience-meta modern-experience-morph">
                       <span>{formatModernDateRange(item.period)}</span>
                       {item.location && <span>{item.location}</span>}
                     </div>
 
-                    {item.summary && <p className="modern-experience-summary">{item.summary}</p>}
+                    {item.summary && <p className="modern-experience-summary modern-experience-morph">{item.summary}</p>}
 
                     {highlights.length > 0 && (
                       <div className="modern-experience-selected-work">
-                        <p>Selected work</p>
-                        <ul>
+                        <p className="modern-experience-static">Selected work</p>
+                        <ul className="modern-experience-morph">
                           {highlights.map((highlight) => (
                             <li key={highlight}>{highlight}</li>
                           ))}
@@ -404,7 +405,7 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
                     )}
 
                     {item.technologies && item.technologies.length > 0 && (
-                      <ul className="modern-tag-list" aria-label="Technologies">
+                      <ul className="modern-tag-list modern-experience-morph" aria-label="Technologies">
                         {item.technologies.map((technology) => (
                           <li key={technology}>{technology}</li>
                         ))}
