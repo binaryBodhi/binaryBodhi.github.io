@@ -495,8 +495,8 @@ button.modern-window-control:focus-visible {
   gap: var(--modern-space-3);
   min-width: 0;
   min-height: 0;
+  z-index: 1;
   pointer-events: none;
-  visibility: hidden;
 }
 
 .modern-experience-panel.is-active {
@@ -505,8 +505,8 @@ button.modern-window-control:focus-visible {
   visibility: visible;
 }
 
+.modern-experience-card-backdrops,
 .modern-experience-art-layer {
-  z-index: 2;
   grid-area: 1 / 1;
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
@@ -515,6 +515,24 @@ button.modern-window-control:focus-visible {
   min-width: 0;
   min-height: 0;
   pointer-events: none;
+}
+
+.modern-experience-card-backdrops {
+  z-index: 0;
+}
+
+.modern-experience-art-layer {
+  z-index: 2;
+}
+
+@media (min-width: 768px) {
+  /* Keep the colored surfaces still while both entries blend above them. */
+  .modern-experience-panel > .modern-experience-heading-panel,
+  .modern-experience-panel > .modern-experience-navigation-panel,
+  .modern-experience-panel > .modern-experience-copy-panel {
+    background: transparent;
+    border-color: transparent;
+  }
 }
 
 .modern-experience-art-layer > .modern-experience-art-panel {
@@ -536,45 +554,21 @@ button.modern-window-control:focus-visible {
 .modern-experience-navigation-panel > *,
 .modern-experience-copy-panel > *,
 .modern-experience-art-panel > .modern-pixel-canvas {
-  opacity: 0;
-  transform: translateY(1.4rem);
-  transition:
-    opacity 260ms var(--modern-ease-standard),
-    transform 520ms var(--modern-ease-standard);
-}
-
-.modern-experience-panel.is-active .modern-experience-heading-panel > *,
-.modern-experience-panel.is-active .modern-experience-navigation-panel > *,
-.modern-experience-panel.is-active .modern-experience-copy-panel > *,
-.modern-experience-panel.is-active .modern-experience-art-panel > .modern-pixel-canvas {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: var(--modern-experience-weight, 1);
+  transform:
+    translateY(calc((1 - var(--modern-experience-weight, 1)) * 0.4rem))
+    scale(calc(0.985 + var(--modern-experience-weight, 1) * 0.015));
+  filter: blur(calc((1 - var(--modern-experience-weight, 1)) * 4px));
 }
 
 .modern-experience-art-panel--persistent > .modern-pixel-canvas {
   opacity: 1;
   transform: none;
-  transition: none;
+  filter: none;
 }
 
 .modern-experience-entry-mark {
   display: none;
-}
-
-.modern-experience-panel.is-active .modern-experience-heading-panel > * {
-  transition-delay: 20ms;
-}
-
-.modern-experience-panel.is-active .modern-experience-navigation-panel > * {
-  transition-delay: 60ms;
-}
-
-.modern-experience-panel.is-active .modern-experience-copy-panel > * {
-  transition-delay: 100ms;
-}
-
-.modern-experience-panel.is-active .modern-experience-art-panel > .modern-pixel-canvas {
-  transition-delay: 140ms;
 }
 
 .modern-experience-heading-panel {
@@ -1308,6 +1302,7 @@ button.modern-window-control:focus-visible {
   }
 
   .modern-experience-panel,
+  .modern-experience-card-backdrops,
   .modern-experience-art-layer {
     grid-template-columns: minmax(0, 1.08fr) minmax(14rem, 0.92fr);
   }
@@ -1455,6 +1450,7 @@ button.modern-window-control:focus-visible {
     visibility: visible;
   }
 
+  .modern-experience-card-backdrops,
   .modern-experience-art-layer {
     display: none;
   }
@@ -1469,6 +1465,7 @@ button.modern-window-control:focus-visible {
   .modern-experience-panel .modern-experience-art-panel > .modern-pixel-canvas {
     opacity: 1;
     transform: none;
+    filter: none;
     transition: none;
   }
 

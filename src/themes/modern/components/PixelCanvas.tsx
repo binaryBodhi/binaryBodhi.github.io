@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useLayoutEffect, useRef } from "react"
 import { useReducedMotion } from "./useReducedMotion"
 import { createLifeGrid, DEFAULT_LIFE_SETTINGS, stepLifeGrid, type LifeSettings } from "./gameOfLife"
 
@@ -14,6 +14,8 @@ interface PixelCanvasProps {
   className?: string
   lifeSettings?: LifeSettings
   mark?: string
+  /** Externally animated letter weights, sharing the experience cards' clock. */
+  markWeights?: Readonly<Record<string, number>>
   /** Called after the takeover's final, fully opaque frame is drawn. */
   onComplete?: () => void
   progress?: number
@@ -23,6 +25,7 @@ interface PixelCanvasProps {
 interface DrawOptions {
   fromMark: string
   mark: string
+  markWeights: () => Readonly<Record<string, number>> | undefined
   progress: () => number
   transitionStart: number
   lifeSettings: () => LifeSettings
@@ -229,6 +232,10 @@ function drawMark(
 
   const fromGlyph = glyphs[options.fromMark] ?? glyphs.S
   const toGlyph = glyphs[options.mark] ?? glyphs.S
+  const weightedGlyphs = Object.entries(options.markWeights() ?? {}).map(([mark, weight]) => ({
+    glyph: glyphs[mark] ?? glyphs.S,
+    weight,
+  }))
   const rawProgress = Math.min(1, Math.max(0, (time - options.transitionStart) / 720))
   const progress = rawProgress * rawProgress * (3 - 2 * rawProgress)
   const cell = Math.max(3, Math.min(width / 8.5, height / 10.5))
@@ -239,11 +246,14 @@ function drawMark(
     for (let column = 0; column < 5; column += 1) {
       const fromOn = fromGlyph[row][column] === "1" ? 1 : 0
       const toOn = toGlyph[row][column] === "1" ? 1 : 0
-      const strength = fromOn + (toOn - fromOn) * progress
+      const strength = weightedGlyphs.length > 0
+        ? weightedGlyphs.reduce((sum, { glyph, weight }) => sum + Number(glyph[row][column]) * weight, 0)
+        : fromOn + (toOn - fromOn) * progress
       if (strength <= 0.02) continue
 
-      const changing = fromOn !== toOn
-      const scatter = changing ? Math.sin(progress * Math.PI) : 0
+      const scatter = weightedGlyphs.length > 0
+        ? Math.sin(strength * Math.PI)
+        : fromOn !== toOn ? Math.sin(progress * Math.PI) : 0
       const phase = row * 1.7 + column * 2.3
       const driftX = Math.sin(time * 0.0022 + phase) * cell * 0.18 * scatter
       const driftY = Math.cos(time * 0.0018 + phase) * cell * 0.22 * scatter
@@ -351,6 +361,7 @@ export function PixelCanvas({
   className = "",
   lifeSettings,
   mark = "S",
+  markWeights,
   onComplete,
   progress = 1,
   variant,
@@ -358,9 +369,15 @@ export function PixelCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const previousMarkRef = useRef(mark.toUpperCase().slice(0, 1))
   const progressRef = useRef(progress)
+  const markWeightsRef = useRef(markWeights)
   const lifeSettingsRef = useRef(lifeSettings)
   const redrawRef = useRef<(() => void) | null>(null)
   const reducedMotion = useReducedMotion()
+
+  useLayoutEffect(() => {
+    markWeightsRef.current = markWeights
+    redrawRef.current?.()
+  }, [markWeights])
 
   useEffect(() => {
     lifeSettingsRef.current = lifeSettings
@@ -387,6 +404,7 @@ export function PixelCanvas({
     const drawOptions: DrawOptions = {
       fromMark: previousMarkRef.current,
       mark: nextMark,
+      markWeights: () => markWeightsRef.current,
       progress: () => progressRef.current,
       transitionStart: window.performance.now(),
       lifeSettings: () => lifeSettingsRef.current ?? { ...DEFAULT_LIFE_SETTINGS, paused: reducedMotion },

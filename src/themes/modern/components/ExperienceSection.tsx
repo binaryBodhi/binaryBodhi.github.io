@@ -4,6 +4,7 @@ import type { Experience } from "../../../data/types"
 import { formatModernDateRange } from "../date"
 import { PixelCanvas } from "./PixelCanvas"
 import { useReducedMotion } from "./useReducedMotion"
+import { useExperienceMorph } from "./useExperienceMorph"
 
 interface ExperienceSectionProps {
   experience: Experience[]
@@ -43,6 +44,12 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
   const [isCompact, setIsCompact] = useState(() => window.matchMedia("(max-width: 767px)").matches)
   const reducedMotion = useReducedMotion()
   const experienceCount = experience.length
+  const morphWeights = useExperienceMorph(activeIndex, experienceCount, isCompact || reducedMotion)
+  const markWeights: Record<string, number> = {}
+  experience.forEach((item, index) => {
+    const mark = getOrganizationMark(item.organization)
+    markWeights[mark] = (markWeights[mark] ?? 0) + (morphWeights[index] ?? 0)
+  })
 
   useEffect(() => {
     const compactQuery = window.matchMedia("(max-width: 767px)")
@@ -295,14 +302,24 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
           </h2>
 
           <div className="modern-experience-panels">
+            <div className="modern-experience-card-backdrops" aria-hidden="true">
+              <div className="modern-experience-heading-panel" />
+              <div className="modern-experience-navigation-panel" />
+              <div className="modern-experience-copy-panel" />
+            </div>
             {experience.map((item, index) => {
               const isActive = index === activeIndex
+              const weight = morphWeights[index] ?? 0
               const highlights = item.highlights ?? []
 
               return (
                 <article
                   key={item.id}
                   className={`modern-experience-panel${isActive ? " is-active" : ""}`}
+                  style={{
+                    "--modern-experience-weight": weight,
+                    visibility: isCompact || weight > 0 ? "visible" : "hidden",
+                  } as CSSProperties}
                   aria-hidden={!isCompact && !isActive}
                   inert={!isCompact && !isActive ? true : undefined}
                 >
@@ -412,7 +429,8 @@ export function ExperienceSection({ experience, onEntranceStart, onTakeoverChang
                 <PixelCanvas
                   variant="mark"
                   progress={clamp((visibleEntranceProgress - 0.08) / 0.28, 0, 1)}
-                  mark={getOrganizationMark(experience[activeIndex].organization)}
+                  mark={getOrganizationMark(experience[0].organization)}
+                  markWeights={markWeights}
                 />
               </div>
             </div>
