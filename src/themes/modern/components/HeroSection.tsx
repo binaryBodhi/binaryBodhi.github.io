@@ -37,6 +37,7 @@ export function HeroSection({ data }: HeroSectionProps) {
           <div className="modern-hero-background" aria-hidden="true">
             <PixelCanvas variant="hero" lifeSettings={lifeSettings} />
           </div>
+          <LifeControls settings={lifeSettings} onChange={setLifeSettings} />
           {currentExperience && (
             <div className="modern-hero-now-building modern-side-widget modern-side-widget--gold">
               <span className="modern-widget-key" aria-hidden="true">N</span>
@@ -76,7 +77,6 @@ export function HeroSection({ data }: HeroSectionProps) {
         )}
 
         <Reveal className="modern-hero-widgets" delay={180}>
-          <LifeControls settings={lifeSettings} onChange={setLifeSettings} />
           {data.profile.location && (
             <div className="modern-side-widget modern-side-widget--blue">
               <span className="modern-widget-key" aria-hidden="true">L</span>
