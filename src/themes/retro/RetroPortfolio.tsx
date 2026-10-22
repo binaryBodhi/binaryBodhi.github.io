@@ -49,23 +49,17 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
         </button>
 
         <nav className="retro-navigation" aria-label="Portfolio navigation">
-          <button
-            className={activeView === "education" ? "is-active" : undefined}
-            type="button"
-            aria-pressed={activeView === "education"}
-            onClick={() => setActiveView("education")}
-          >
-            Education
-          </button>
-          <button
-            className={activeView === "experience" ? "is-active" : undefined}
-            type="button"
-            aria-pressed={activeView === "experience"}
-            onClick={() => setActiveView("experience")}
-          >
-            Experience
-          </button>
-          <a href="#projects">Projects</a>
+          {(["education", "experience"] as const).map((view) => (
+            <button
+              key={view}
+              className={activeView === view ? "is-active" : undefined}
+              type="button"
+              aria-pressed={activeView === view}
+              onClick={() => setActiveView(view)}
+            >
+              {view === "education" ? "Education" : "Experience"}
+            </button>
+          ))}
           {data.profile.email && <a href={`mailto:${data.profile.email}`}>Contact</a>}
         </nav>
 

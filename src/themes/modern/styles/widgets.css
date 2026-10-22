@@ -1,0 +1,109 @@
+.modern-reveal {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 620ms var(--modern-ease-standard),
+    transform 620ms var(--modern-ease-standard);
+}
+
+.modern-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modern-pixel-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.modern-kicker,
+.modern-mono-label {
+  margin: 0;
+  font-family: var(--modern-font-display);
+  font-size: clamp(0.62rem, 0.9vw, 0.78rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.modern-window {
+  border: var(--modern-border-width) solid currentColor;
+  background: var(--modern-panel);
+  color: var(--modern-ink);
+  box-shadow: 0.38rem 0.38rem 0 currentColor;
+}
+
+.modern-window--draggable .modern-window-bar {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.modern-window--draggable .modern-window-bar:focus-visible {
+  outline: 2px dashed currentColor;
+  outline-offset: -4px;
+}
+
+.modern-window--dragging {
+  box-shadow: 0.55rem 0.55rem 0 currentColor;
+}
+
+.modern-window--dragging .modern-window-bar {
+  cursor: grabbing;
+}
+
+.modern-window-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--modern-space-2);
+  min-height: 2rem;
+  padding: 0.3rem 0.45rem;
+  border-bottom: var(--modern-border-width) solid currentColor;
+  font-family: var(--modern-font-display);
+  font-size: 0.62rem;
+}
+
+.modern-window-control,
+.modern-window-copy {
+  display: grid;
+  width: 1rem;
+  height: 1rem;
+  border: var(--modern-border-width) solid currentColor;
+  line-height: 1;
+  place-items: center;
+}
+
+button.modern-window-control {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+button.modern-window-control:hover,
+button.modern-window-control:focus-visible {
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+  outline: none;
+}
+
+.modern-window-content {
+  padding: var(--modern-space-4);
+}
+
+.modern-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--modern-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.modern-tag-list li {
+  padding: 0.35rem 0.48rem;
+  border: var(--modern-border-width) solid currentColor;
+  font-family: var(--modern-font-display);
+  font-size: 0.6rem;
+}

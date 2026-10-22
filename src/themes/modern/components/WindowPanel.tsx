@@ -1,6 +1,6 @@
+import { clamp } from "../../../shared/math"
 import { useEffect, useRef, useState } from "react"
 import type {
-  CSSProperties,
   KeyboardEvent,
   PointerEvent,
   ReactNode,
@@ -21,6 +21,13 @@ interface Position {
   y: number
 }
 
+const arrowDirections = new Map<string, Position>([
+  ["ArrowLeft", { x: -1, y: 0 }],
+  ["ArrowRight", { x: 1, y: 0 }],
+  ["ArrowUp", { x: 0, y: -1 }],
+  ["ArrowDown", { x: 0, y: 1 }],
+])
+
 interface DragState {
   boundaryRect: DOMRect
   origin: Position
@@ -30,23 +37,17 @@ interface DragState {
   windowRect: DOMRect
 }
 
-const clamp = (value: number, minimum: number, maximum: number) =>
-  Math.min(Math.max(value, minimum), maximum)
-
 const keepInsideBoundary = (
   nextPosition: Position,
   rect: DOMRect,
   boundaryRect?: DOMRect,
+  delta: Position = { x: 0, y: 0 },
 ): Position => {
   if (!boundaryRect) return nextPosition
 
   return {
-    x:
-      nextPosition.x +
-      clamp(0, boundaryRect.left - rect.left, boundaryRect.right - rect.right),
-    y:
-      nextPosition.y +
-      clamp(0, boundaryRect.top - rect.top, boundaryRect.bottom - rect.bottom),
+    x: nextPosition.x + clamp(delta.x, boundaryRect.left - rect.left, boundaryRect.right - rect.right),
+    y: nextPosition.y + clamp(delta.y, boundaryRect.top - rect.top, boundaryRect.bottom - rect.bottom),
   }
 }
 
@@ -117,24 +118,10 @@ export function WindowPanel({
     if (!dragState || dragState.pointerId !== event.pointerId) return
 
     event.preventDefault()
-    const deltaX = event.clientX - dragState.startX
-    const deltaY = event.clientY - dragState.startY
-    setPosition({
-      x:
-        dragState.origin.x +
-        clamp(
-          deltaX,
-          dragState.boundaryRect.left - dragState.windowRect.left,
-          dragState.boundaryRect.right - dragState.windowRect.right,
-        ),
-      y:
-        dragState.origin.y +
-        clamp(
-          deltaY,
-          dragState.boundaryRect.top - dragState.windowRect.top,
-          dragState.boundaryRect.bottom - dragState.windowRect.bottom,
-        ),
-    })
+    setPosition(keepInsideBoundary(dragState.origin, dragState.windowRect, dragState.boundaryRect, {
+      x: event.clientX - dragState.startX,
+      y: event.clientY - dragState.startY,
+    }))
   }
 
   const stopDragging = (event: PointerEvent<HTMLElement>) => {
@@ -163,38 +150,14 @@ export function WindowPanel({
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (!draggable) return
 
+    const direction = arrowDirections.get(event.key)
+    const reset = event.key === "Escape" || event.key === "Home"
+    if (!direction && !reset) return
+    event.preventDefault()
     const step = event.shiftKey ? 32 : 12
-    switch (event.key) {
-      case "ArrowLeft":
-        event.preventDefault()
-        moveByKeyboard(-step, 0)
-        break
-      case "ArrowRight":
-        event.preventDefault()
-        moveByKeyboard(step, 0)
-        break
-      case "ArrowUp":
-        event.preventDefault()
-        moveByKeyboard(0, -step)
-        break
-      case "ArrowDown":
-        event.preventDefault()
-        moveByKeyboard(0, step)
-        break
-      case "Escape":
-      case "Home":
-        event.preventDefault()
-        setPosition({ x: 0, y: 0 })
-        break
-    }
+    if (direction) moveByKeyboard(direction.x * step, direction.y * step)
+    else setPosition({ x: 0, y: 0 })
   }
-
-  const style = draggable
-    ? ({
-        "--modern-window-x": `${position.x}px`,
-        "--modern-window-y": `${position.y}px`,
-      } as CSSProperties)
-    : undefined
 
   return (
     <article
@@ -202,7 +165,7 @@ export function WindowPanel({
       className={`modern-window${draggable ? " modern-window--draggable" : ""}${
         isDragging ? " modern-window--dragging" : ""
       }${className ? ` ${className}` : ""}`}
-      style={style}
+      style={draggable ? { transform: `translate3d(${position.x}px, ${position.y}px, 0)` } : undefined}
     >
       <header
         className="modern-window-bar"

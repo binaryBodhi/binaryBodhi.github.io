@@ -1,116 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import type { CSSProperties, MouseEvent } from "react"
+import { ScrambleLabel } from "./components/ScrambleLabel"
+import { ThemeSwitchButton } from "./components/ThemeSwitchButton"
+import { mediaQueries } from "../../shared/hooks/useMediaQuery"
 import { modernNavigationItems } from "./modernNavigation"
+import { getInitials } from "../../shared/text"
 import type { ModernSectionId } from "./modernNavigation"
 
 interface ModernHeaderProps {
   activeSection: ModernSectionId
+  menuIsOpen: boolean
   name: string
-  onMenuStateChange?: (isOpen: boolean) => void
+  onMenuStateChange: (isOpen: boolean) => void
   onNavigate: (sectionId: ModernSectionId) => void
   onSwitchTheme?: () => void
 }
 
-const scrambleCharacters = "<>/[]{}01*+#"
-const scrambleFrameDuration = 34
-const scrambleExtension = 350
-
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
-}
-
-function ScrambleLabel({ isActive, text }: { isActive: boolean; text: string }) {
-  const [visibleText, setVisibleText] = useState(text)
-  const animationRef = useRef<number | null>(null)
-
-  const startAnimation = useCallback(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-
-    if (animationRef.current !== null) window.clearInterval(animationRef.current)
-
-    const previousDuration =
-      Math.ceil(text.length / 0.55) * scrambleFrameDuration
-    const extendedDuration = previousDuration + scrambleExtension
-    const totalFrames = Math.max(
-      1,
-      Math.ceil(extendedDuration / scrambleFrameDuration),
-    )
-    const charactersPerFrame = text.length / totalFrames
-    let resolvedCharacters = 0
-    animationRef.current = window.setInterval(() => {
-      resolvedCharacters += charactersPerFrame
-      setVisibleText(
-        [...text]
-          .map((character, index) => {
-            if (character === " " || index < resolvedCharacters) return character
-            return scrambleCharacters[
-              Math.floor(Math.random() * scrambleCharacters.length)
-            ]
-          })
-          .join(""),
-      )
-
-      if (resolvedCharacters >= text.length) {
-        window.clearInterval(animationRef.current ?? undefined)
-        animationRef.current = null
-        setVisibleText(text)
-      }
-    }, scrambleFrameDuration)
-  }, [text])
-
-  useEffect(() => {
-    if (!isActive) return
-
-    startAnimation()
-
-    return () => {
-      if (animationRef.current !== null) {
-        window.clearInterval(animationRef.current)
-        animationRef.current = null
-      }
-    }
-  }, [isActive, startAnimation])
-
-  return (
-    <>
-      <span
-        className="modern-scramble-label"
-        aria-hidden="true"
-      >
-        {isActive ? visibleText : text}
-      </span>
-      <span className="modern-visually-hidden">{text}</span>
-    </>
-  )
-}
-
 export function ModernHeader({
-activeSection,
+  activeSection,
+  menuIsOpen,
   name,
   onMenuStateChange,
   onNavigate,
   onSwitchTheme,
 }: ModernHeaderProps) {
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
   const [scrambleTarget, setScrambleTarget] = useState<string | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const navigationRef = useRef<HTMLElement>(null)
+  const restoreFocusFrameRef = useRef(0)
 
-  const closeMenu = (restoreFocus = false) => {
-    setMenuIsOpen(false)
+  const closeMenu = useCallback((restoreFocus = false) => {
+    onMenuStateChange(false)
     if (restoreFocus) {
-      window.requestAnimationFrame(() => menuButtonRef.current?.focus())
+      window.cancelAnimationFrame(restoreFocusFrameRef.current)
+      restoreFocusFrameRef.current = window.requestAnimationFrame(() => menuButtonRef.current?.focus())
     }
-  }
+  }, [onMenuStateChange])
+
+  useEffect(() => () => window.cancelAnimationFrame(restoreFocusFrameRef.current), [])
 
   useEffect(() => {
-    onMenuStateChange?.(menuIsOpen)
-
     if (!menuIsOpen) return
 
     const focusFrame = window.requestAnimationFrame(() => {
@@ -119,8 +48,7 @@ activeSection,
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setMenuIsOpen(false)
-        window.requestAnimationFrame(() => menuButtonRef.current?.focus())
+        closeMenu(true)
       }
     }
 
@@ -129,29 +57,26 @@ activeSection,
       window.cancelAnimationFrame(focusFrame)
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [menuIsOpen, onMenuStateChange])
+  }, [menuIsOpen, onMenuStateChange, closeMenu])
 
   useEffect(() => {
-    const desktopQuery = window.matchMedia("(min-width: 768px)")
+    const desktopQuery = window.matchMedia(mediaQueries.desktop)
     const closeMenuAtDesktopSize = (event: MediaQueryListEvent) => {
       if (!event.matches) return
 
       const focusIsInMenu = navigationRef.current?.contains(document.activeElement)
-      setMenuIsOpen(false)
-      if (focusIsInMenu) menuButtonRef.current?.focus()
+      onMenuStateChange(false)
+      if (focusIsInMenu) navigationRef.current?.querySelector<HTMLAnchorElement>("a")?.focus()
     }
 
     desktopQuery.addEventListener("change", closeMenuAtDesktopSize)
     return () => desktopQuery.removeEventListener("change", closeMenuAtDesktopSize)
-  }, [])
+  }, [onMenuStateChange])
 
-  const handleNavigation = (sectionId: ModernSectionId) => {
-    const shouldRestoreFocus = menuIsOpen
-    setMenuIsOpen(false)
+  const handleNavigation = (sectionId: ModernSectionId) => (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+    closeMenu(menuIsOpen)
     onNavigate(sectionId)
-    if (shouldRestoreFocus) {
-      window.requestAnimationFrame(() => menuButtonRef.current?.focus())
-    }
   }
 
   return (
@@ -160,10 +85,7 @@ activeSection,
         className="modern-brand"
         href="#modern-about"
         aria-label={`${name} — back to About`}
-        onClick={(event) => {
-          event.preventDefault()
-          handleNavigation("modern-about")
-        }}
+        onClick={handleNavigation("modern-about")}
       >
         <span className="modern-brand-mark" aria-hidden="true">
           {getInitials(name)}
@@ -177,7 +99,7 @@ activeSection,
         type="button"
         aria-expanded={menuIsOpen}
         aria-controls="modern-navigation"
-        onClick={() => (menuIsOpen ? closeMenu() : setMenuIsOpen(true))}
+        onClick={() => (menuIsOpen ? closeMenu() : onMenuStateChange(true))}
       >
         {menuIsOpen ? "Close" : "Menu"}
       </button>
@@ -188,21 +110,20 @@ activeSection,
         className={`modern-navigation${menuIsOpen ? " is-open" : ""}`}
         aria-label="Modern portfolio navigation"
       >
-        {modernNavigationItems.filter((item) => item.id !== "modern-about").map((item) => (
+        {modernNavigationItems.filter((item) => item.id !== "modern-about").map((item, index) => (
           <a
             key={item.id}
             className="modern-nav-link"
+            style={{ "--modern-nav-index": index } as CSSProperties}
             href={`#${item.id}`}
             aria-current={activeSection === item.id ? "location" : undefined}
             onPointerEnter={() => setScrambleTarget(item.id)}
             onPointerLeave={() => setScrambleTarget(null)}
-            onClick={(event) => {
-              event.preventDefault()
-              handleNavigation(item.id)
-            }}
+            onClick={handleNavigation(item.id)}
           >
             <span
-              className={`modern-key modern-key--${item.accent}`}
+              className="modern-key"
+              style={{ background: `var(--modern-accent-${item.accent})` }}
               aria-hidden="true"
             >
               {item.key}
@@ -214,42 +135,10 @@ activeSection,
           </a>
         ))}
 
-        {onSwitchTheme && (
-          <button
-            className="modern-theme-switch modern-theme-switch--mobile"
-            type="button"
-            onPointerEnter={() => setScrambleTarget("retro-mobile")}
-            onPointerLeave={() => setScrambleTarget(null)}
-            onClick={onSwitchTheme}
-          >
-            <ScrambleLabel
-              isActive={scrambleTarget === "retro-mobile"}
-              text="Retro Site"
-            />
-            <span className="modern-key modern-key--pink" aria-hidden="true">
-              R
-            </span>
-          </button>
-        )}
+        {onSwitchTheme && <ThemeSwitchButton placement="mobile" onSwitch={onSwitchTheme} />}
       </nav>
 
-      {onSwitchTheme && (
-        <button
-          className="modern-theme-switch modern-theme-switch--desktop"
-          type="button"
-          onPointerEnter={() => setScrambleTarget("retro-desktop")}
-          onPointerLeave={() => setScrambleTarget(null)}
-          onClick={onSwitchTheme}
-        >
-          <ScrambleLabel
-            isActive={scrambleTarget === "retro-desktop"}
-            text="Retro Site"
-          />
-          <span className="modern-key modern-key--pink" aria-hidden="true">
-            R
-          </span>
-        </button>
-      )}
+      {onSwitchTheme && <ThemeSwitchButton placement="desktop" onSwitch={onSwitchTheme} />}
     </header>
   )
 }

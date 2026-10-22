@@ -6,6 +6,11 @@ interface LifeControlsProps {
   onChange: (settings: LifeSettings) => void
 }
 
+const sliders = [
+  { key: "generationsPerSecond", label: "Generations / second", max: 30, unit: "" },
+  { key: "seedPercent", label: "Starting population", max: 50, unit: "%" },
+] as const
+
 export function LifeControls({ settings, onChange }: LifeControlsProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null)
   const summaryRef = useRef<HTMLElement>(null)
@@ -37,28 +42,19 @@ export function LifeControls({ settings, onChange }: LifeControlsProps) {
         <span aria-hidden="true" className="modern-life-chevron">⌄</span>
       </summary>
       <div className="modern-life-dropdown">
-        <label>
-          <span>Generations / second</span>
-          <input
-            type="range"
-            min="1"
-            max="30"
-            value={settings.generationsPerSecond}
-            onChange={(event) => onChange({ ...settings, generationsPerSecond: Number(event.target.value) })}
-          />
-          <output>{settings.generationsPerSecond}</output>
-        </label>
-        <label>
-          <span>Starting population</span>
-          <input
-            type="range"
-            min="1"
-            max="50"
-            value={settings.seedPercent}
-            onChange={(event) => onChange({ ...settings, seedPercent: Number(event.target.value) })}
-          />
-          <output>{settings.seedPercent}%</output>
-        </label>
+        {sliders.map(({ key, label, max, unit }) => (
+          <label key={key}>
+            <span>{label}</span>
+            <input
+              type="range"
+              min="1"
+              max={max}
+              value={settings[key]}
+              onChange={(event) => onChange({ ...settings, [key]: Number(event.target.value) })}
+            />
+            <output>{settings[key]}{unit}</output>
+          </label>
+        ))}
         <p>Changing the population restarts the grid.</p>
         <div className="modern-life-actions">
           <button type="button" onClick={() => onChange({ ...settings, paused: !settings.paused })}>

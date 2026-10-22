@@ -1,0 +1,82 @@
+/* Skills */
+
+.modern-skills-section {
+  background: var(--modern-accent-slate);
+}
+
+.modern-skills-heading {
+  align-items: stretch;
+}
+
+.modern-skills-heading > .modern-reveal:first-child {
+  align-self: end;
+}
+
+.modern-skills-canvas {
+  min-height: 20rem;
+  overflow: hidden;
+  border: var(--modern-border-width) solid var(--modern-border);
+}
+
+.modern-skills-grid {
+  display: grid;
+  grid-template-columns: var(--modern-stack-columns, repeat(2, minmax(0, 1fr)));
+  border-top: var(--modern-border-width) solid var(--modern-border);
+  border-left: var(--modern-border-width) solid var(--modern-border);
+}
+
+.modern-skill-module {
+  height: 100%;
+  min-height: 18rem;
+  border-right: var(--modern-border-width) solid var(--modern-border);
+  border-bottom: var(--modern-border-width) solid var(--modern-border);
+  background: var(--modern-panel);
+  transition:
+    background-color var(--modern-duration-medium) var(--modern-ease-standard),
+    color var(--modern-duration-medium) var(--modern-ease-standard);
+}
+
+.modern-skill-module:hover,
+.modern-skill-module:focus-within {
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+}
+
+.modern-skill-module header {
+  font-family: var(--modern-font-display);
+  font-size: clamp(0.66rem, 1vw, 0.82rem);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--modern-space-4);
+  align-items: baseline;
+  padding: var(--modern-space-4);
+  border-bottom: var(--modern-border-width) solid currentColor;
+}
+
+.modern-skill-module h3 {
+  font-size: inherit;
+  margin: 0;
+}
+
+.modern-skill-module ul {
+  display: grid;
+  grid-template-columns: var(--modern-stack-columns, repeat(2, minmax(0, 1fr)));
+  gap: var(--modern-space-3);
+  margin: 0;
+  padding: var(--modern-space-5);
+  list-style: none;
+}
+
+.modern-skill-module li {
+  display: flex;
+  align-items: center;
+  gap: var(--modern-space-2);
+  font-size: 0.86rem;
+}
+
+.modern-skill-module li span {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  background: var(--modern-accent-gold);
+}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react"
 import type { RefObject } from "react"
-import { useReducedMotion } from "./useReducedMotion"
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion"
 
 const SCROLL_DURATION_MS = 1200
 const easeOut = (progress: number) => Math.min(1, 1.001 - 2 ** (-10 * progress))
@@ -8,6 +8,7 @@ type ScrollPause = (from: number, to: number) => number | null
 
 export function attachInertialScroll(scrollRoot: HTMLElement, getPausePosition?: ScrollPause) {
   const wheelRoot = scrollRoot.parentElement ?? scrollRoot
+  const listeners = new AbortController()
   let frame = 0
   let target = scrollRoot.scrollTop
   let lastPosition = target
@@ -90,23 +91,18 @@ export function attachInertialScroll(scrollRoot: HTMLElement, getPausePosition?:
     if (frame && Math.abs(scrollRoot.scrollTop - lastPosition) > 1) stop()
   }
 
-  wheelRoot.addEventListener("wheel", handleWheel, { passive: false })
-  scrollRoot.addEventListener("scroll", handleScroll, { passive: true })
-  scrollRoot.addEventListener("pointerdown", stop, { passive: true })
-  scrollRoot.addEventListener("touchstart", stop, { passive: true })
-  scrollRoot.addEventListener("keydown", stop, true)
-  window.addEventListener("resize", stop)
+  wheelRoot.addEventListener("wheel", handleWheel, { passive: false, signal: listeners.signal })
+  scrollRoot.addEventListener("scroll", handleScroll, { passive: true, signal: listeners.signal })
+  scrollRoot.addEventListener("pointerdown", stop, { passive: true, signal: listeners.signal })
+  scrollRoot.addEventListener("touchstart", stop, { passive: true, signal: listeners.signal })
+  scrollRoot.addEventListener("keydown", stop, { capture: true, signal: listeners.signal })
+  window.addEventListener("resize", stop, { signal: listeners.signal })
 
   return {
     stop,
     destroy: () => {
       stop()
-      wheelRoot.removeEventListener("wheel", handleWheel)
-      scrollRoot.removeEventListener("scroll", handleScroll)
-      scrollRoot.removeEventListener("pointerdown", stop)
-      scrollRoot.removeEventListener("touchstart", stop)
-      scrollRoot.removeEventListener("keydown", stop, true)
-      window.removeEventListener("resize", stop)
+      listeners.abort()
     },
   }
 }

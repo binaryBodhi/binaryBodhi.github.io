@@ -32,14 +32,6 @@
   place-items: center;
 }
 
-.retro-navigation {
-  position: absolute;
-  top: 0;
-  z-index: 1;
-  padding-inline: 0.5rem;
-  background: var(--retro-paper);
-  transform: translateY(-50%);
-}
 
 .retro-border-control {
   position: absolute;
@@ -74,6 +66,12 @@
 }
 
 .retro-navigation {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  padding-inline: 0.5rem;
+  transform: translateY(-50%);
+
   right: clamp(0.5rem, 1.5vw, 1.25rem);
   display: flex;
   align-items: center;
@@ -81,8 +79,7 @@
   background: transparent;
 }
 
-.retro-navigation a,
-.retro-navigation button,
+.retro-navigation :is(a, button),
 .retro-home,
 .retro-social-links a {
   border: 0;
@@ -94,8 +91,7 @@
   cursor: pointer;
 }
 
-.retro-navigation a,
-.retro-navigation button,
+.retro-navigation :is(a, button),
 .retro-home {
   --retro-nav-cut: 0.45rem;
   position: relative;
@@ -113,19 +109,16 @@
   );
 }
 
-.retro-navigation a::before,
-.retro-navigation button::before,
+.retro-navigation :is(a, button)::before,
 .retro-home::before,
-.retro-navigation a::after,
-.retro-navigation button::after,
+.retro-navigation :is(a, button)::after,
 .retro-home::after {
   position: absolute;
   content: "";
   pointer-events: none;
 }
 
-.retro-navigation a::before,
-.retro-navigation button::before,
+.retro-navigation :is(a, button)::before,
 .retro-home::before {
   inset: 0;
   z-index: -2;
@@ -133,8 +126,7 @@
   clip-path: inherit;
 }
 
-.retro-navigation a::after,
-.retro-navigation button::after,
+.retro-navigation :is(a, button)::after,
 .retro-home::after {
   inset: 1px;
   z-index: -1;
@@ -152,15 +144,10 @@
   padding: 0;
 }
 
-.retro-navigation a:hover,
-.retro-navigation a:focus-visible,
-.retro-navigation button:hover,
-.retro-navigation button:focus-visible,
+.retro-navigation :is(a, button):is(:hover, :focus-visible),
 .retro-navigation button.is-active,
-.retro-home:hover,
-.retro-home:focus-visible,
-.retro-social-links a:hover,
-.retro-social-links a:focus-visible {
+.retro-home:is(:hover, :focus-visible),
+.retro-social-links a:is(:hover, :focus-visible) {
   text-decoration: underline;
   text-underline-offset: 0.25rem;
 }
@@ -169,8 +156,7 @@
   color: var(--retro-blue);
 }
 
-.retro-navigation a:focus-visible,
-.retro-navigation button:focus-visible,
+.retro-navigation :is(a, button):focus-visible,
 .retro-home:focus-visible {
   outline: none;
   filter: drop-shadow(0 0 2px var(--retro-blue));
@@ -265,10 +251,6 @@
     gap: 0.75rem;
   }
 
-  .retro-navigation a[href="#projects"] {
-    display: none;
-  }
-
   .retro-title-row {
     align-items: center;
   }
@@ -291,8 +273,7 @@
     padding-inline: 0.15rem;
   }
 
-  .retro-navigation a,
-  .retro-navigation button,
+  .retro-navigation :is(a, button),
   .retro-home {
     --retro-nav-cut: 0.32rem;
     min-height: 2rem;

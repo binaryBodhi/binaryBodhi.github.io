@@ -1,21 +1,15 @@
-import type { Education, Profile } from "../../../data/types"
-import { formatModernDateRange } from "../date"
+import type { PortfolioData } from "../../../data/types"
+import { formatDateRange } from "../../../shared/date"
+import { BulletList } from "../../../shared/BulletList"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
-interface AboutSectionProps {
-  education: Education[]
-  profile: Profile
-}
-
-export function AboutSection({ education, profile }: AboutSectionProps) {
+export function AboutSection({ education, profile }: Pick<PortfolioData, "education" | "profile">) {
   return (
     <SectionFrame
-      id="modern-background"
+      name="background"
       index="05"
       label="Background / learning"
-      titleId="modern-background-title"
-      className="modern-background-section"
     >
       <div className="modern-background-layout">
         <Reveal className="modern-background-heading">
@@ -38,18 +32,12 @@ export function AboutSection({ education, profile }: AboutSectionProps) {
             <Reveal key={item.id} delay={Math.min(index * 80, 160)}>
               <article className="modern-education-card">
                 <span aria-hidden="true">EDU.{index + 1}</span>
-                <p>{formatModernDateRange(item.period)}</p>
+                <p>{formatDateRange(item.period)}</p>
                 <h3>{item.qualification}</h3>
                 {item.field && <p>{item.field}</p>}
                 <strong>{item.institution}</strong>
                 {item.location && <small>{item.location}</small>}
-                {item.highlights && item.highlights.length > 0 && (
-                  <ul>
-                    {item.highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
-                    ))}
-                  </ul>
-                )}
+                <BulletList items={item.highlights} />
               </article>
             </Reveal>
           ))}

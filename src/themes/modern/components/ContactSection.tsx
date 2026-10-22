@@ -1,33 +1,17 @@
-import type { Profile, SocialLink } from "../../../data/types"
+import { getContactLinks } from "../../../shared/contactLinks"
+import type { PortfolioData } from "../../../data/types"
 import { PixelCanvas } from "./PixelCanvas"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
-interface ContactSectionProps {
-  profile: Profile
-  socialLinks: SocialLink[]
-}
-
-export function ContactSection({ profile, socialLinks }: ContactSectionProps) {
-  const links = [
-    ...socialLinks.map((link) => ({
-      id: link.id,
-      label: link.label,
-      url: link.url,
-      external: !link.url.startsWith("mailto:"),
-    })),
-    ...(profile.email
-      ? [{ id: "email", label: "Email", url: `mailto:${profile.email}`, external: false }]
-      : []),
-  ]
+export function ContactSection({ profile, socialLinks }: Pick<PortfolioData, "profile" | "socialLinks">) {
+  const links = getContactLinks(profile, socialLinks)
 
   return (
     <SectionFrame
-      id="modern-contact"
+      name="contact"
       index="06"
       label="Contact / next signal"
-      titleId="modern-contact-title"
-      className="modern-contact-section"
     >
       <div className="modern-contact-grid">
         <Reveal className="modern-contact-copy">
@@ -41,7 +25,7 @@ export function ContactSection({ profile, socialLinks }: ContactSectionProps) {
           <p className="modern-mono-label">Channels</p>
           {links.map((link, index) => (
             <a
-              key={link.id}
+              key={link.url}
               href={link.url}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noreferrer" : undefined}

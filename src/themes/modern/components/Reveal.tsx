@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import type { CSSProperties, ReactNode } from "react"
-import { useReducedMotion } from "./useReducedMotion"
+import type { ReactNode } from "react"
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion"
 
 interface RevealProps {
   children: ReactNode
@@ -34,17 +34,13 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     return () => observer.disconnect()
   }, [reducedMotion])
 
-  const style = {
-    "--modern-reveal-delay": `${delay}ms`,
-  } as CSSProperties
-
   return (
     <div
       ref={elementRef}
       className={`modern-reveal${
         isVisible || reducedMotion ? " is-visible" : ""
       }${className ? ` ${className}` : ""}`}
-      style={style}
+      style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
     </div>

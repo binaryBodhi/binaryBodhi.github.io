@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 
-const MORPH_DURATION_MS = 720
+import { MARK_MORPH_DURATION_MS } from "../../../../shared/animation"
+import { smoothstep } from "../../../../shared/math"
 
 /** One clock for the card content and pixel letters, preserving interrupted blends. */
 export function useExperienceMorph(activeIndex: number, count: number, immediate: boolean) {
@@ -17,8 +18,8 @@ export function useExperienceMorph(activeIndex: number, count: number, immediate
     let frame = 0
 
     const advance = (time: number) => {
-      const progress = immediate ? 1 : Math.min(1, (time - start) / MORPH_DURATION_MS)
-      const eased = progress * progress * (3 - 2 * progress)
+      const progress = immediate ? 1 : Math.min(1, (time - start) / MARK_MORPH_DURATION_MS)
+      const eased = smoothstep(progress)
       const next = target.map((value, index) => from[index] + (value - from[index]) * eased)
       weightsRef.current = next
       setWeights(next)

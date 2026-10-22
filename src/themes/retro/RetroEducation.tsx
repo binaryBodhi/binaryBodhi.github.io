@@ -1,12 +1,10 @@
 import type { Education } from "../../data/types"
-import { formatDateRange } from "./date"
+import { formatDateRange } from "../../shared/date"
+import { BulletList } from "../../shared/BulletList"
+import "./RetroSections.css"
 import "./RetroEducation.css"
 
-interface RetroEducationProps {
-  education: Education[]
-}
-
-export function RetroEducation({ education }: RetroEducationProps) {
+export function RetroEducation({ education }: { education: Education[] }) {
   return (
     <section
       className="retro-education"
@@ -55,13 +53,7 @@ export function RetroEducation({ education }: RetroEducationProps) {
                 )}
               </div>
 
-              {item.highlights && item.highlights.length > 0 && (
-                <ul className="retro-education-highlights">
-                  {item.highlights.map((highlight) => (
-                    <li key={highlight}>{highlight}</li>
-                  ))}
-                </ul>
-              )}
+              <BulletList className="retro-education-highlights" items={item.highlights} />
             </article>
           )
         })}

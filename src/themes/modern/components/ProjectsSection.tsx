@@ -4,11 +4,7 @@ import { PixelCanvas } from "./PixelCanvas"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
-interface ProjectsSectionProps {
-  projects: Project[]
-}
-
-export function ProjectsSection({ projects }: ProjectsSectionProps) {
+export function ProjectsSection({ projects }: { projects: Project[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const visibleIndex = projects.length > 0 ? activeIndex % projects.length : 0
   const activeProject = projects[visibleIndex]
@@ -23,11 +19,9 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
 
   return (
     <SectionFrame
-      id="modern-projects"
+      name="projects"
       index="03"
       label="Project archive"
-      titleId="modern-projects-title"
-      className="modern-projects-section"
     >
       <Reveal className="modern-projects-heading">
         <h2 id="modern-projects-title">Projects, assembled as working systems.</h2>

@@ -1,3 +1,4 @@
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion"
 import { useRef, useState } from "react"
 import type { PortfolioData } from "../../../data/types"
 import { PixelCanvas } from "./PixelCanvas"
@@ -7,16 +8,24 @@ import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 import { WindowPanel } from "./WindowPanel"
 
-interface HeroSectionProps {
-  data: PortfolioData
+function SideWidget({ label, value, accent, className = "" }: {
+  label: string; value: string; accent: string; className?: string
+}) {
+  return (
+    <div className={`${className} modern-side-widget`}>
+      <span className="modern-widget-key" style={{ background: `var(--modern-accent-${accent})` }} aria-hidden="true">{label[0]}</span>
+      <div><strong>{label}</strong><span>{value}</span></div>
+    </div>
+  )
 }
 
-export function HeroSection({ data }: HeroSectionProps) {
+export function HeroSection({ data }: { data: PortfolioData }) {
+  const reducedMotion = useReducedMotion()
   const heroGridRef = useRef<HTMLDivElement>(null)
   const [terminalIsOpen, setTerminalIsOpen] = useState(true)
   const [lifeSettings, setLifeSettings] = useState(() => ({
     ...DEFAULT_LIFE_SETTINGS,
-    paused: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    paused: reducedMotion,
   }))
   const headlineParts = data.profile.headline
     .split(/(?<=,)\s+|\s*\|\s*/)
@@ -26,10 +35,9 @@ export function HeroSection({ data }: HeroSectionProps) {
 
   return (
     <SectionFrame
-      id="modern-about"
+      name="about"
       index="01"
       label="Profile / system entry"
-      titleId="modern-about-title"
       className="modern-hero-section"
     >
       <div ref={heroGridRef} className="modern-hero-grid">
@@ -39,13 +47,7 @@ export function HeroSection({ data }: HeroSectionProps) {
           </div>
           <LifeControls settings={lifeSettings} onChange={setLifeSettings} />
           {currentExperience && (
-            <div className="modern-hero-now-building modern-side-widget modern-side-widget--gold">
-              <span className="modern-widget-key" aria-hidden="true">N</span>
-              <div>
-                <strong>Now building</strong>
-                <span>{currentExperience.organization}</span>
-              </div>
-            </div>
+            <SideWidget className="modern-hero-now-building" label="Now building" value={currentExperience.organization} accent="gold" />
           )}
           <Reveal className="modern-hero-heading-wrap">
             <h1 id="modern-about-title" tabIndex={-1}>
@@ -78,22 +80,10 @@ export function HeroSection({ data }: HeroSectionProps) {
 
         <Reveal className="modern-hero-widgets" delay={180}>
           {data.profile.location && (
-            <div className="modern-side-widget modern-side-widget--blue">
-              <span className="modern-widget-key" aria-hidden="true">L</span>
-              <div>
-                <strong>Location</strong>
-                <span>{data.profile.location}</span>
-              </div>
-            </div>
+            <SideWidget label="Location" value={data.profile.location} accent="blue" />
           )}
           {data.profile.availability && (
-            <div className="modern-side-widget modern-side-widget--green">
-              <span className="modern-widget-key" aria-hidden="true">A</span>
-              <div>
-                <strong>Availability</strong>
-                <span>{data.profile.availability}</span>
-              </div>
-            </div>
+            <SideWidget label="Availability" value={data.profile.availability} accent="green" />
           )}
         </Reveal>
       </div>

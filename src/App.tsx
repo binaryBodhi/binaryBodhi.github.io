@@ -1,40 +1,23 @@
-import { useCallback, useRef, useState } from "react"
+import { getViewportRect, readElementRect } from "./shared/dom"
+import { useRef, useState } from "react"
 import { ModernPortfolio } from "./themes/modern/ModernPortfolio"
 import { RetroPortfolio } from "./themes/retro/RetroPortfolio"
 import { portfolioData } from "./data/data"
 import {
   ThemeTransition,
-  type ThemeTransitionDirection,
   type ThemeTransitionRect,
 } from "./components/theme-transition/ThemeTransition"
 
 type Theme = "retro" | "modern"
 
 interface ActiveTransition {
-  direction: ThemeTransitionDirection
+  destination: Theme
   sourceRect: ThemeTransitionRect
 }
 
 function measureThemeFrame(theme: Theme): ThemeTransitionRect {
   const selector = theme === "retro" ? ".retro-frame" : ".modern-shell"
-  const frame = document.querySelector<HTMLElement>(selector)
-  const rect = frame?.getBoundingClientRect()
-
-  if (!rect) {
-    return {
-      top: 0,
-      left: 0,
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
-  }
-
-  return {
-    top: rect.top,
-    left: rect.left,
-    width: rect.width,
-    height: rect.height,
-  }
+  return readElementRect(selector) ?? getViewportRect()
 }
 
 function App() {
@@ -44,29 +27,25 @@ function App() {
   const [announcement, setAnnouncement] = useState("")
   const transitionIsRunningRef = useRef(false)
   const isTransitioning = activeTransition !== null
-  const destinationTheme = activeTransition?.direction === "to-modern"
-    ? "modern"
-    : activeTransition?.direction === "to-retro"
-      ? "retro"
-      : null
+  const destinationTheme = activeTransition?.destination
   const surfacePhase = isTransitioning
     ? theme === destinationTheme
       ? "incoming"
       : "outgoing"
     : "idle"
 
-  const beginThemeTransition = useCallback((nextTheme: Theme) => {
+  const beginThemeTransition = (nextTheme: Theme) => {
     if (transitionIsRunningRef.current || nextTheme === theme) return
 
     transitionIsRunningRef.current = true
     setAnnouncement(`Switching to the ${nextTheme} portfolio.`)
     setActiveTransition({
-      direction: nextTheme === "modern" ? "to-modern" : "to-retro",
+      destination: nextTheme,
       sourceRect: measureThemeFrame(theme),
     })
-  }, [theme])
+  }
 
-  const finishThemeTransition = useCallback(() => {
+  const finishThemeTransition = () => {
     const completedTheme = destinationTheme ?? "retro"
     setActiveTransition(null)
     transitionIsRunningRef.current = false
@@ -78,24 +57,13 @@ function App() {
         : "retro-name"
       document.getElementById(focusTargetId)?.focus({ preventScroll: true })
     })
-  }, [destinationTheme])
-
-  const swapThemeUnderTransition = useCallback(() => {
-    if (!activeTransition) return
-
-    setTheme(activeTransition.direction === "to-modern" ? "modern" : "retro")
-  }, [activeTransition])
+  }
+  const Portfolio = theme === "modern" ? ModernPortfolio : RetroPortfolio
 
   return (
     <div
       className="app"
-      data-theme-phase={
-        activeTransition
-          ? activeTransition.direction === "to-modern"
-            ? "transitioning-to-modern"
-            : "transitioning-to-retro"
-          : theme
-      }
+      data-theme-phase={destinationTheme ? `transitioning-to-${destinationTheme}` : theme}
       aria-busy={isTransitioning}
     >
       <div
@@ -103,24 +71,14 @@ function App() {
         inert={isTransitioning}
         aria-hidden={isTransitioning ? true : undefined}
       >
-        {theme === "modern" ? (
-          <ModernPortfolio
-            data={portfolioData}
-            onSwitchTheme={() => beginThemeTransition("retro")}
-          />
-        ) : (
-          <RetroPortfolio
-            data={portfolioData}
-            onSwitchTheme={() => beginThemeTransition("modern")}
-          />
-        )}
+        <Portfolio data={portfolioData} onSwitchTheme={() => beginThemeTransition(theme === "modern" ? "retro" : "modern")} />
       </div>
 
       {activeTransition && (
         <ThemeTransition
-          direction={activeTransition.direction}
+          direction={`to-${activeTransition.destination}`}
           sourceRect={activeTransition.sourceRect}
-          onSwap={swapThemeUnderTransition}
+          onSwap={() => setTheme(activeTransition.destination)}
           onComplete={finishThemeTransition}
         />
       )}

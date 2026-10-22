@@ -1,3 +1,6 @@
+import { mediaQueries } from "../../shared/hooks/useMediaQuery"
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion"
+import { getScrollOffset } from "../../shared/dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import type { PortfolioData } from "../../data/types"
@@ -13,7 +16,15 @@ import { ModernHeader } from "./ModernHeader"
 import { modernNavigationItems } from "./modernNavigation"
 import type { ModernSectionId } from "./modernNavigation"
 import "./ModernPortfolio.css"
-import "./ModernSections.css"
+import "./styles/widgets.css"
+import "./styles/HeroSection.css"
+import "./styles/sections.css"
+import "./styles/ExperienceSection.css"
+import "./styles/ProjectsSection.css"
+import "./styles/SkillsSection.css"
+import "./styles/AboutSection.css"
+import "./styles/ContactSection.css"
+import "./styles/responsive.css"
 
 interface ModernPortfolioProps {
   data: PortfolioData
@@ -21,17 +32,17 @@ interface ModernPortfolioProps {
 }
 
 export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
+  const reducedMotion = useReducedMotion()
   const [activeSection, setActiveSection] = useState<ModernSectionId>("modern-about")
   const [navigationIsOpen, setNavigationIsOpen] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
   const pauseAtExperience = useCallback((from: number, to: number) => {
-    if (to <= from || window.matchMedia("(max-width: 767px)").matches) return null
+    if (to <= from || window.matchMedia(mediaQueries.compact).matches) return null
     const scrollRoot = mainRef.current
     const experience = scrollRoot?.querySelector<HTMLElement>("#modern-experience")
     if (!scrollRoot || !experience) return null
 
-    const pinPosition = scrollRoot.scrollTop + experience.getBoundingClientRect().top -
-      scrollRoot.getBoundingClientRect().top
+    const pinPosition = getScrollOffset(scrollRoot, experience)
     // Browsers can round scrollTop below the fractional section position.
     // Once within the entrance's one-pixel tolerance, let the timeline advance.
     return from < pinPosition - 1 && to >= pinPosition ? pinPosition : null
@@ -62,13 +73,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
       animationFrame = 0
       const rootTop = scrollRoot.getBoundingClientRect().top
       const activationLine = rootTop + scrollRoot.clientHeight * 0.32
-      let nextSection: HTMLElement | undefined = sections[0]
-
-      for (const section of sections) {
-        if (section.getBoundingClientRect().top <= activationLine) {
-          nextSection = section
-        }
-      }
+      let nextSection: HTMLElement | undefined = sections.findLast((section) => section.getBoundingClientRect().top <= activationLine) ?? sections[0]
 
       if (
         scrollRoot.scrollTop + scrollRoot.clientHeight >=
@@ -100,12 +105,8 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
     const section = document.getElementById(sectionId)
     if (!scrollRoot || !section) return
 
-    const rootRect = scrollRoot.getBoundingClientRect()
-    const sectionRect = section.getBoundingClientRect()
-    const navigationOffset = Number(section.dataset.navigationOffset ?? 0)
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     scrollRoot.scrollTo({
-      top: scrollRoot.scrollTop + sectionRect.top - rootRect.top + navigationOffset,
+      top: getScrollOffset(scrollRoot, section),
       behavior: reducedMotion ? "auto" : "smooth",
     })
     setActiveSection(sectionId)
@@ -116,35 +117,20 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
 
     const scrollRoot = event.currentTarget
     const pageDistance = scrollRoot.clientHeight * 0.9
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const behavior: ScrollBehavior = reducedMotion ? "auto" : "smooth"
 
-    switch (event.key) {
-      case "Home":
-        event.preventDefault()
-        scrollRoot.scrollTo({ top: 0, behavior })
-        break
-      case "End":
-        event.preventDefault()
-        scrollRoot.scrollTo({ top: scrollRoot.scrollHeight, behavior })
-        break
-      case "PageUp":
-        event.preventDefault()
-        scrollRoot.scrollBy({ top: -pageDistance, behavior })
-        break
-      case "PageDown":
-        event.preventDefault()
-        scrollRoot.scrollBy({ top: pageDistance, behavior })
-        break
-      case "ArrowUp":
-        event.preventDefault()
-        scrollRoot.scrollBy({ top: -48, behavior })
-        break
-      case "ArrowDown":
-        event.preventDefault()
-        scrollRoot.scrollBy({ top: 48, behavior })
-        break
-    }
+    const actions = new Map<string, () => void>([
+      ["Home", () => scrollRoot.scrollTo({ top: 0, behavior })],
+      ["End", () => scrollRoot.scrollTo({ top: scrollRoot.scrollHeight, behavior })],
+      ["PageUp", () => scrollRoot.scrollBy({ top: -pageDistance, behavior })],
+      ["PageDown", () => scrollRoot.scrollBy({ top: pageDistance, behavior })],
+      ["ArrowUp", () => scrollRoot.scrollBy({ top: -48, behavior })],
+      ["ArrowDown", () => scrollRoot.scrollBy({ top: 48, behavior })],
+    ])
+    const action = actions.get(event.key)
+    if (!action) return
+    event.preventDefault()
+    action()
   }
 
   return (
@@ -163,6 +149,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
         <div className="modern-header-shell">
           <ModernHeader
             activeSection={activeSection}
+            menuIsOpen={navigationIsOpen}
             name={data.profile.name}
             onMenuStateChange={setNavigationIsOpen}
             onNavigate={navigateToSection}

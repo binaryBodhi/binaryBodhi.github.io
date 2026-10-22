@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { getViewportRect, readElementRect, type FrameRect } from "../../shared/dom"
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion"
+import { THEME_TRANSITION_TIMING } from "../../shared/animation"
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react"
 import type { CSSProperties } from "react"
 import "./ThemeTransition.css"
 
 export type ThemeTransitionDirection = "to-modern" | "to-retro"
 
-export interface ThemeTransitionRect {
-  top: number
-  left: number
-  width: number
-  height: number
-}
+export type ThemeTransitionRect = FrameRect
 
 interface ThemeTransitionProps {
   direction: ThemeTransitionDirection
@@ -20,41 +18,7 @@ interface ThemeTransitionProps {
 
 type TransitionStage = "covering" | "revealing"
 
-interface RetroTabOutline {
-  top: number
-  left: number
-  width: number
-  height: number
-}
-
-const standardSwapDelay = 620
-const standardCompleteDelay = 1360
-const reducedSwapDelay = 70
-const reducedCompleteDelay = 140
-
-function readElementRect(selector: string): ThemeTransitionRect | null {
-  const element = document.querySelector<HTMLElement>(selector)
-  if (!element) return null
-
-  const rect = element.getBoundingClientRect()
-  return {
-    top: rect.top,
-    left: rect.left,
-    width: rect.width,
-    height: rect.height,
-  }
-}
-
-function getViewportRect(): ThemeTransitionRect {
-  return {
-    top: 0,
-    left: 0,
-    width: window.innerWidth,
-    height: window.innerHeight,
-  }
-}
-
-function readRetroTabOutlines(): RetroTabOutline[] {
+function readRetroTabOutlines(): FrameRect[] {
   return Array.from(
     document.querySelectorAll<HTMLElement>(
       ".retro-home, .retro-navigation > button, .retro-navigation > a",
@@ -62,28 +26,6 @@ function readRetroTabOutlines(): RetroTabOutline[] {
   )
     .map((element) => element.getBoundingClientRect())
     .filter((rect) => rect.width > 0 && rect.height > 0)
-    .map((rect) => ({
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
-    }))
-}
-
-function useReducedMotion() {
-  const [reducedMotion, setReducedMotion] = useState(() =>
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  )
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const updatePreference = () => setReducedMotion(mediaQuery.matches)
-
-    mediaQuery.addEventListener("change", updatePreference)
-    return () => mediaQuery.removeEventListener("change", updatePreference)
-  }, [])
-
-  return reducedMotion
 }
 
 export function ThemeTransition({
@@ -95,21 +37,13 @@ export function ThemeTransition({
   const reducedMotion = useReducedMotion()
   const [stage, setStage] = useState<TransitionStage>("covering")
   const [frameRect, setFrameRect] = useState(sourceRect)
-  const [retroTabOutlines, setRetroTabOutlines] = useState<RetroTabOutline[]>([])
-  const [viewport, setViewport] = useState(() => ({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  }))
+  const [retroTabOutlines, setRetroTabOutlines] = useState<FrameRect[]>([])
+  const [viewport, setViewport] = useState(getViewportRect)
   const stageRef = useRef<TransitionStage>("covering")
   const swappedRef = useRef(false)
   const completedRef = useRef(false)
-  const onSwapRef = useRef(onSwap)
-  const onCompleteRef = useRef(onComplete)
-
-  useEffect(() => {
-    onSwapRef.current = onSwap
-    onCompleteRef.current = onComplete
-  }, [onComplete, onSwap])
+  const swap = useEffectEvent(onSwap)
+  const complete = useEffectEvent(onComplete)
 
   const pixelGrid = useMemo(() => {
     const usesCompactGrid = viewport.width < 560
@@ -125,11 +59,7 @@ export function ThemeTransition({
     const rows = Math.ceil(viewport.height / pixelSize)
     const originColumn = direction === "to-modern" ? columns - 1 : 0
     const originRow = direction === "to-modern" ? rows - 1 : 0
-    const maximumDistance = Math.max(
-      1,
-      Math.hypot(columns - 1 - originColumn, rows - 1 - originRow),
-      Math.hypot(originColumn, originRow),
-    )
+    const maximumDistance = Math.max(1, Math.hypot(columns - 1, rows - 1))
 
     const cells = Array.from({ length: columns * rows }, (_, index) => {
       const column = index % columns
@@ -150,28 +80,32 @@ export function ThemeTransition({
   useEffect(() => {
     const destinationSelector =
       direction === "to-modern" ? ".modern-shell" : ".retro-frame"
-    const swapDelay = reducedMotion ? reducedSwapDelay : standardSwapDelay
+    const swapDelay = reducedMotion ? THEME_TRANSITION_TIMING.reducedSwap : THEME_TRANSITION_TIMING.swap
     const completeDelay = reducedMotion
-      ? reducedCompleteDelay
-      : standardCompleteDelay
+      ? THEME_TRANSITION_TIMING.reducedComplete
+      : THEME_TRANSITION_TIMING.complete
 
+    let swapFrame = 0
+    let revealFrame = 0
     const coverFrame = window.requestAnimationFrame(() => {
       setFrameRect(getViewportRect())
     })
+
+    const measureDestination = () => {
+      const destinationRect = readElementRect(destinationSelector)
+      if (destinationRect) setFrameRect(destinationRect)
+      if (direction === "to-retro") setRetroTabOutlines(readRetroTabOutlines())
+    }
 
     const swapTimer = window.setTimeout(() => {
       if (swappedRef.current) return
 
       swappedRef.current = true
-      onSwapRef.current()
+      swap()
 
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          const destinationRect = readElementRect(destinationSelector)
-          if (destinationRect) setFrameRect(destinationRect)
-          if (direction === "to-retro") {
-            setRetroTabOutlines(readRetroTabOutlines())
-          }
+      swapFrame = window.requestAnimationFrame(() => {
+        revealFrame = window.requestAnimationFrame(() => {
+          measureDestination()
           stageRef.current = "revealing"
           setStage("revealing")
         })
@@ -182,39 +116,30 @@ export function ThemeTransition({
       if (completedRef.current) return
 
       completedRef.current = true
-      onCompleteRef.current()
+      complete()
     }, completeDelay)
 
     const handleResize = () => {
-      setViewport({ width: window.innerWidth, height: window.innerHeight })
+      setViewport(getViewportRect())
 
       if (stageRef.current === "covering") {
         setFrameRect(getViewportRect())
         return
       }
 
-      const destinationRect = readElementRect(destinationSelector)
-      if (destinationRect) setFrameRect(destinationRect)
-      if (direction === "to-retro") {
-        setRetroTabOutlines(readRetroTabOutlines())
-      }
+      measureDestination()
     }
 
     window.addEventListener("resize", handleResize)
     return () => {
       window.cancelAnimationFrame(coverFrame)
+      window.cancelAnimationFrame(swapFrame)
+      window.cancelAnimationFrame(revealFrame)
       window.clearTimeout(swapTimer)
       window.clearTimeout(completeTimer)
       window.removeEventListener("resize", handleResize)
     }
   }, [direction, reducedMotion])
-
-  const frameStyle = {
-    "--transition-frame-top": `${frameRect.top}px`,
-    "--transition-frame-left": `${frameRect.left}px`,
-    "--transition-frame-width": `${frameRect.width}px`,
-    "--transition-frame-height": `${frameRect.height}px`,
-  } as CSSProperties
 
   const gridStyle = {
     "--transition-pixel-columns": pixelGrid.columns,
@@ -243,11 +168,13 @@ export function ThemeTransition({
         ))}
       </div>
 
-      <div className="theme-transition__frame" style={frameStyle}>
-        <span className="theme-transition__corner theme-transition__corner--top-left" />
-        <span className="theme-transition__corner theme-transition__corner--top-right" />
-        <span className="theme-transition__corner theme-transition__corner--bottom-left" />
-        <span className="theme-transition__corner theme-transition__corner--bottom-right" />
+      <div className="theme-transition__frame" style={frameRect}>
+        {(["top", "bottom"] as const).flatMap((vertical) =>
+          (["left", "right"] as const).map((horizontal) => (
+            <span key={`${vertical}-${horizontal}`} className="theme-transition__corner"
+              style={{ [vertical]: "-0.3rem", [horizontal]: "-0.3rem" }} />
+          )),
+        )}
       </div>
 
       {direction === "to-retro" && retroTabOutlines.length > 0 && (
@@ -255,14 +182,6 @@ export function ThemeTransition({
           {retroTabOutlines.map((tab, index) => {
             const inset = 0.75
             const cut = Math.min(7.2, Math.max(4.5, tab.height * 0.24))
-            const path = [
-              `M ${cut} ${inset}`,
-              `H ${tab.width - inset}`,
-              `V ${tab.height - inset}`,
-              `H ${inset}`,
-              `V ${cut}`,
-              "Z",
-            ].join(" ")
 
             return (
               <svg
@@ -279,7 +198,7 @@ export function ThemeTransition({
                 preserveAspectRatio="none"
               >
                 <path
-                  d={path}
+                  d={`M ${cut} ${inset} H ${tab.width - inset} V ${tab.height - inset} H ${inset} V ${cut} Z`}
                   pathLength="1"
                   vectorEffect="non-scaling-stroke"
                 />

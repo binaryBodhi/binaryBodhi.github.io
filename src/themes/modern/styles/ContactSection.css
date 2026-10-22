@@ -1,0 +1,103 @@
+/* Contact */
+
+.modern-contact-section {
+  min-height: max(44rem, 90svh);
+  background: var(--modern-accent-pink);
+}
+
+.modern-contact-section .modern-section-body {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+
+.modern-contact-grid {
+  display: grid;
+  grid-template-columns: var(--modern-stack-columns, minmax(0, 1fr) minmax(15rem, 0.55fr));
+  grid-template-rows: auto minmax(16rem, 1fr);
+  gap: var(--modern-space-4);
+  flex: 1;
+  padding-block: clamp(2rem, 6vw, 6rem);
+}
+
+.modern-contact-copy {
+  grid-column: 1;
+}
+
+.modern-contact-copy h2 {
+  max-width: 13ch;
+  margin-top: var(--modern-space-5);
+}
+
+.modern-contact-links {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  border: var(--modern-border-width) solid var(--modern-border);
+  background: var(--modern-panel);
+}
+
+.modern-contact-links > p {
+  padding: var(--modern-space-4);
+  border-bottom: var(--modern-border-width) solid var(--modern-border);
+}
+
+.modern-contact-links a {
+  font-family: var(--modern-font-display);
+  font-size: 0.68rem;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--modern-space-3);
+  min-height: 3.6rem;
+  padding: var(--modern-space-3) var(--modern-space-4);
+  border-bottom: var(--modern-border-width) solid var(--modern-border);
+  text-decoration: none;
+  transition:
+    background-color var(--modern-duration-fast) var(--modern-ease-standard),
+    color var(--modern-duration-fast) var(--modern-ease-standard);
+}
+
+.modern-contact-links a:hover,
+.modern-contact-links a:focus-visible {
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+}
+
+.modern-contact-art {
+  grid-column: 1;
+  min-height: 18rem;
+  overflow: hidden;
+  border: var(--modern-border-width) solid var(--modern-border);
+}
+
+.modern-footer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--modern-space-4);
+  overflow: hidden;
+  padding: var(--modern-space-4) 0;
+  border-top: var(--modern-border-width) solid var(--modern-border);
+  font-family: var(--modern-font-display);
+  font-size: 0.62rem;
+}
+
+.modern-footer > span {
+  position: relative;
+  z-index: 2;
+}
+
+.modern-footer > strong {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -0.45em;
+  z-index: 1;
+  max-width: 100%;
+  overflow: hidden;
+  color: rgb(17 17 17 / 8%);
+  font-family: var(--modern-font-body);
+  font-size: clamp(3.5rem, 10vw, 10rem);
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+  white-space: nowrap;
+}

@@ -1,20 +1,14 @@
-import type { SkillGroup } from "../../../data/types"
+import type { PortfolioData } from "../../../data/types"
 import { PixelCanvas } from "./PixelCanvas"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
-interface SkillsSectionProps {
-  skills: SkillGroup[]
-}
-
-export function SkillsSection({ skills }: SkillsSectionProps) {
+export function SkillsSection({ skills }: Pick<PortfolioData, "skills">) {
   return (
     <SectionFrame
-      id="modern-skills"
+      name="skills"
       index="04"
       label="Technical system map"
-      titleId="modern-skills-title"
-      className="modern-skills-section"
     >
       <div className="modern-skills-heading">
         <Reveal>

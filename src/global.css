@@ -1,6 +1,8 @@
 html,
 body,
-#root {
+#root,
+.app,
+.app-theme {
   width: 100%;
   height: 100%;
 }
@@ -15,52 +17,35 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-.app {
-  width: 100%;
-  height: 100%;
-}
-
-.app-theme {
-  width: 100%;
-  height: 100%;
-}
-
 .app-theme--outgoing {
+  --app-navigation-animation: app-theme-navigation-out 430ms steps(6, end) both;
   animation: app-theme-surface-out 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .app-theme--incoming {
+  --app-navigation-animation: app-theme-navigation-in 480ms steps(6, end) 80ms both;
   animation: app-theme-surface-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.app-theme--outgoing .retro-navigation,
-.app-theme--outgoing .retro-home,
-.app-theme--outgoing .retro-theme-switch,
-.app-theme--outgoing .modern-navigation,
-.app-theme--outgoing .modern-brand,
-.app-theme--outgoing .modern-theme-switch,
-.app-theme--outgoing .modern-menu-button {
-  animation: app-theme-navigation-out 430ms steps(6, end) both;
+:is(.app-theme--outgoing, .app-theme--incoming) :is(
+  .retro-navigation, .retro-home, .retro-theme-switch,
+  .modern-navigation, .modern-brand, .modern-theme-switch, .modern-menu-button
+) {
+  animation: var(--app-navigation-animation);
 }
 
-.app-theme--incoming .retro-navigation,
-.app-theme--incoming .retro-home,
-.app-theme--incoming .retro-theme-switch,
-.app-theme--incoming .modern-navigation,
-.app-theme--incoming .modern-brand,
-.app-theme--incoming .modern-theme-switch,
-.app-theme--incoming .modern-menu-button {
-  animation: app-theme-navigation-in 480ms steps(6, end) 80ms both;
-}
-
-.app-visually-hidden {
-  position: fixed;
+.app-visually-hidden,
+.modern-visually-hidden {
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.app-visually-hidden {
+  position: fixed;
 }
 
 @keyframes app-theme-surface-out {
@@ -133,20 +118,10 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .app-theme--outgoing,
   .app-theme--incoming,
-  .app-theme--outgoing .retro-navigation,
-  .app-theme--outgoing .retro-home,
-  .app-theme--outgoing .retro-theme-switch,
-  .app-theme--outgoing .modern-navigation,
-  .app-theme--outgoing .modern-brand,
-  .app-theme--outgoing .modern-theme-switch,
-  .app-theme--outgoing .modern-menu-button,
-  .app-theme--incoming .retro-navigation,
-  .app-theme--incoming .retro-home,
-  .app-theme--incoming .retro-theme-switch,
-  .app-theme--incoming .modern-navigation,
-  .app-theme--incoming .modern-brand,
-  .app-theme--incoming .modern-theme-switch,
-  .app-theme--incoming .modern-menu-button {
+  :is(.app-theme--outgoing, .app-theme--incoming) :is(
+    .retro-navigation, .retro-home, .retro-theme-switch,
+    .modern-navigation, .modern-brand, .modern-theme-switch, .modern-menu-button
+  ) {
     animation: none;
   }
 }

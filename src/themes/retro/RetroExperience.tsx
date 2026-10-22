@@ -1,44 +1,12 @@
 import type { Experience } from "../../data/types"
-import { formatDateRange } from "./date"
+import { formatDateRange, formatTimelineRange } from "../../shared/date"
+import { BulletList } from "../../shared/BulletList"
+import { getInitials } from "../../shared/text"
+import "./RetroSections.css"
 import "./RetroExperience.css"
 
-interface RetroExperienceProps {
-  experience: Experience[]
-}
-
-function formatTimeline(experience: Experience[]) {
-  if (experience.length === 0) {
-    return null
-  }
-
-  const start = experience.reduce((earliest, item) =>
-    item.period.start < earliest ? item.period.start : earliest,
-  experience[0].period.start)
-
-  const isOngoing = experience.some((item) => !item.period.end)
-  const completedEnds = experience
-    .map((item) => item.period.end)
-    .filter((end): end is string => Boolean(end))
-  const latestEnd = completedEnds.reduce((latest, end) =>
-    end > latest ? end : latest,
-  completedEnds[0] ?? start)
-
-  return `${start.split("-")[0]} — ${isOngoing ? "Present" : latestEnd.split("-")[0]}`
-}
-
-function getOrganizationMark(organization: string) {
-  return organization
-    .replace(/\([^)]*\)/g, "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase()
-}
-
-export function RetroExperience({ experience }: RetroExperienceProps) {
-  const timeline = formatTimeline(experience)
+export function RetroExperience({ experience }: { experience: Experience[] }) {
+  const timeline = formatTimelineRange(experience.map((item) => item.period))
 
   return (
     <section
@@ -65,7 +33,7 @@ export function RetroExperience({ experience }: RetroExperienceProps) {
                 />
               ) : (
                 <div className="retro-experience-mark" aria-hidden="true">
-                  {getOrganizationMark(item.organization)}
+                  {getInitials(item.organization.replace(/\([^)]*\)/g, ""))}
                 </div>
               )}
             </div>
@@ -81,13 +49,7 @@ export function RetroExperience({ experience }: RetroExperienceProps) {
                 <p className="retro-experience-summary">{item.summary}</p>
               )}
 
-              {item.highlights && item.highlights.length > 0 && (
-                <ul className="retro-experience-highlights">
-                  {item.highlights.map((highlight) => (
-                    <li key={highlight}>{highlight}</li>
-                  ))}
-                </ul>
-              )}
+              <BulletList className="retro-experience-highlights" items={item.highlights} />
 
               {item.technologies && item.technologies.length > 0 && (
                 <p className="retro-experience-technologies">

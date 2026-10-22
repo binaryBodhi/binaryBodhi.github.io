@@ -1,0 +1,281 @@
+/* Hero */
+
+.modern-about-experience-flow {
+  position: relative;
+  isolation: isolate;
+}
+
+.modern-about-experience-flow > .modern-hero-section {
+  position: relative;
+  z-index: 0;
+}
+
+.modern-hero-section {
+  min-height: max(48rem, 94svh);
+  background: var(--modern-panel);
+}
+
+.modern-hero-section .modern-section-body {
+  display: flex;
+  flex-direction: column;
+  padding: var(--modern-section-padding, clamp(1rem, 2vw, 2rem));
+}
+
+.modern-hero-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: minmax(18rem, 1fr) auto;
+  min-height: calc(94svh - var(--modern-header-height) - 4rem);
+  gap: var(--modern-space-4);
+}
+
+.modern-hero-heading-frame {
+  position: relative;
+  isolation: isolate;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--modern-space-4);
+  min-width: 0;
+  min-height: 0;
+}
+
+.modern-hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.modern-hero-now-building {
+  position: absolute;
+  top: var(--modern-space-3);
+  right: var(--modern-space-3);
+  z-index: 3;
+  width: min(21rem, calc(100% - 1.5rem));
+}
+
+.modern-hero-canvas-caption {
+  position: absolute;
+  bottom: var(--modern-space-3);
+  right: var(--modern-space-3);
+  z-index: 3;
+  max-width: calc(100% - 1.5rem);
+  background: var(--modern-panel);
+  font-family: var(--modern-font-display);
+  font-size: 0.62rem;
+}
+
+.modern-hero-canvas-caption summary {
+  display: flex;
+  align-items: center;
+  gap: var(--modern-space-2);
+  padding: var(--modern-space-2) var(--modern-space-3);
+  cursor: pointer;
+  list-style: none;
+}
+
+.modern-hero-canvas-caption summary::-webkit-details-marker {
+  display: none;
+}
+
+.modern-life-status {
+  padding: 0.15rem 0.35rem;
+  background: var(--modern-accent-gold);
+}
+
+.modern-life-chevron {
+  font-family: var(--modern-font-body);
+  font-size: 1rem;
+}
+
+.modern-hero-canvas-caption[open] {
+  z-index: 4;
+}
+
+.modern-hero-heading-frame:has(.modern-hero-canvas-caption[open]) {
+  z-index: 4;
+}
+
+.modern-hero-canvas-caption[open] .modern-life-chevron {
+  transform: rotate(180deg);
+}
+
+.modern-life-dropdown {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  width: min(19rem, calc(100vw - 8rem));
+  padding: var(--modern-space-4);
+  border: 1px solid var(--modern-ink);
+  background: var(--modern-panel);
+  box-shadow: 5px 5px 0 var(--modern-ink);
+  font-family: var(--modern-font-body);
+  font-size: 0.85rem;
+}
+
+.modern-life-dropdown label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: var(--modern-space-2);
+  margin-bottom: var(--modern-space-4);
+}
+
+.modern-life-dropdown label > span {
+  grid-column: 1 / -1;
+}
+
+.modern-life-dropdown input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--modern-ink);
+  cursor: pointer;
+}
+
+.modern-life-dropdown output {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.modern-life-dropdown p {
+  margin: 0 0 var(--modern-space-4);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.modern-life-actions {
+  display: flex;
+  gap: var(--modern-space-2);
+}
+
+.modern-life-actions button {
+  flex: 1;
+  min-height: 2.75rem;
+  border: 1px solid var(--modern-ink);
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+}
+
+.modern-life-actions button:last-child {
+  background: var(--modern-panel);
+  color: var(--modern-ink);
+}
+
+.modern-hero-canvas-caption summary:focus-visible,
+.modern-life-dropdown :is(input, button):focus-visible {
+  outline: 2px solid var(--modern-accent-gold);
+  outline-offset: 3px;
+}
+
+.modern-hero-heading-wrap {
+  position: relative;
+  z-index: 2;
+  grid-column: 1 / 10;
+  grid-row: 1;
+  align-self: center;
+  padding-block: var(--modern-space-4);
+  pointer-events: none;
+}
+
+.modern-hero-heading-wrap h1 {
+  position: relative;
+  margin: var(--modern-space-4) 0 0;
+  font-family: var(--modern-font-body);
+  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.75;
+  text-transform: uppercase;
+  transform: scaleY(0.9);
+  transform-origin: left center;
+}
+
+.modern-hero-heading-wrap h1 span {
+  display: block;
+  width: fit-content;
+  max-width: 12ch;
+  background: var(--modern-panel);
+}
+
+.modern-hero-heading-wrap h1 span:nth-child(2) {
+  margin-left: clamp(1rem, 10vw, 8rem);
+}
+
+.modern-hero-terminal {
+  z-index: 3;
+  grid-column: 1 / 7;
+  grid-row: 2;
+  align-self: end;
+  max-width: 36rem;
+  padding: 0 0.55rem 0.55rem 0;
+}
+
+.modern-hero-terminal:has(.modern-window--dragging) {
+  z-index: 5;
+}
+
+.modern-terminal-lines {
+  font-family: var(--modern-font-display);
+  font-size: clamp(0.62rem, 0.85vw, 0.76rem);
+  line-height: 1.6;
+}
+
+.modern-terminal-lines p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.modern-terminal-lines p:nth-child(even) {
+  margin-bottom: var(--modern-space-2);
+  padding-left: var(--modern-space-4);
+  color: var(--modern-muted);
+}
+
+.modern-terminal-lines span {
+  color: var(--modern-accent-gold);
+}
+
+.modern-hero-widgets {
+  z-index: 4;
+  grid-column: 10 / -1;
+  grid-row: 2;
+  align-self: start;
+  display: grid;
+  gap: var(--modern-space-2);
+  padding-top: var(--modern-space-4);
+}
+
+.modern-side-widget {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--modern-space-3);
+  padding: var(--modern-space-3);
+  border: var(--modern-border-width) solid var(--modern-border);
+  background: var(--modern-panel);
+  font-size: 0.72rem;
+}
+
+.modern-widget-key {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-family: var(--modern-font-display);
+  font-size: 0.62rem;
+  place-items: center;
+}
+
+.modern-side-widget strong,
+.modern-side-widget span {
+  display: block;
+}
+
+.modern-side-widget strong {
+  margin-bottom: 0.12rem;
+  font-family: var(--modern-font-display);
+  font-size: 0.62rem;
+}

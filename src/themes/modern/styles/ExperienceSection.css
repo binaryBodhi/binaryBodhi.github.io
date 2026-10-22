@@ -1,0 +1,361 @@
+/* Experience */
+
+.modern-experience-section {
+  --modern-experience-viewport: 46rem;
+  --modern-experience-timeline-travel: 70rem;
+  --modern-experience-panel-fill: 0%;
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: calc(
+    var(--modern-experience-viewport) +
+    var(--modern-experience-timeline-travel)
+  );
+  min-height: 0;
+  isolation: isolate;
+  overflow-anchor: none;
+  background: var(--modern-panel);
+  color: color-mix(in srgb, var(--modern-panel) var(--modern-experience-panel-fill), var(--modern-ink));
+}
+
+.modern-experience-pin {
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: var(--modern-experience-viewport);
+  min-height: 38rem;
+  overflow: hidden;
+  background: transparent;
+}
+
+.modern-experience-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--modern-rail-width) minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.modern-experience-content > .modern-section-index {
+  border-color: rgb(255 255 255 / 35%);
+}
+
+@media (min-width: 768px) {
+  .modern-experience-content > .modern-section-index {
+    color: var(--modern-ink);
+    border-color: var(--modern-border);
+  }
+}
+
+.modern-experience-content > .modern-section-body {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  padding: var(--modern-section-padding, clamp(1rem, 2vw, 1.75rem));
+}
+
+.modern-experience-section .modern-section-label {
+  flex: 0 0 auto;
+  margin-bottom: var(--modern-space-3);
+  color: color-mix(in srgb, var(--modern-accent-gold) var(--modern-experience-panel-fill), var(--modern-ink));
+}
+
+/* Each desktop panel owns one grid area; no duplicate background layers. */
+.modern-experience-panels {
+  display: grid;
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-areas: "heading navigation" "copy art";
+  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
+  grid-template-rows: minmax(12rem, 0.72fr) minmax(15rem, 1fr);
+  gap: var(--modern-space-3);
+}
+
+.modern-experience-panels > .modern-experience-heading-panel { grid-area: heading; }
+.modern-experience-panels > .modern-experience-navigation-panel { grid-area: navigation; }
+.modern-experience-panels > .modern-experience-copy-panel { grid-area: copy; }
+.modern-experience-panels > .modern-experience-art-panel { grid-area: art; }
+
+.modern-experience-heading-panel,
+.modern-experience-navigation-panel,
+.modern-experience-copy-panel,
+.modern-experience-art-panel {
+  min-width: 0;
+  min-height: 0;
+  border: var(--modern-border-width) solid var(--modern-panel);
+  color: var(--modern-ink);
+}
+
+.modern-experience-morph {
+  opacity: var(--modern-experience-weight, 1);
+  transform:
+    translateY(calc((1 - var(--modern-experience-weight, 1)) * 0.4rem))
+    scale(calc(0.985 + var(--modern-experience-weight, 1) * 0.015));
+  filter: blur(calc((1 - var(--modern-experience-weight, 1)) * 4px));
+}
+
+.modern-experience-heading-stack { display: grid; }
+.modern-experience-heading-entry { grid-area: 1 / 1; min-width: 0; align-self: end; }
+
+.modern-experience-heading-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1rem, 2vw, 2rem);
+  background: color-mix(in srgb, var(--modern-accent-pink) var(--modern-experience-panel-fill), var(--modern-panel));
+}
+
+.modern-experience-panel-kicker {
+  position: absolute;
+  top: clamp(1rem, 2vw, 2rem);
+  left: clamp(1rem, 2vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: var(--modern-space-3);
+  font-family: var(--modern-font-display);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.modern-experience-panel-kicker span:first-child {
+  padding: 0.34rem 0.42rem;
+  background: var(--modern-panel);
+}
+
+.modern-experience-panel-number {
+  position: absolute;
+  top: clamp(1rem, 2vw, 2rem);
+  right: clamp(1rem, 2vw, 2rem);
+  display: inline-flex;
+  font-family: var(--modern-font-display);
+  font-size: clamp(1.6rem, 3vw, 3.2rem);
+  line-height: 1;
+}
+
+.modern-experience-panel-suffix {
+  display: inline-grid;
+  /* All suffixes share one track, reserving the widest value throughout the blend. */
+  grid-template-columns: max-content;
+  flex: none;
+  margin-inline-start: -0.08em;
+  text-align: left;
+}
+
+.modern-experience-panel-suffix > .modern-experience-morph {
+  grid-area: 1 / 1;
+}
+
+.modern-experience-heading-panel h3,
+.modern-experience-heading-panel p {
+  margin: 0;
+}
+
+.modern-experience-heading-panel h3 {
+  max-width: 14ch;
+  font-size: clamp(2.65rem, 5.2vw, 6.5rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+}
+
+.modern-experience-heading-entry.has-long-title h3 {
+  font-size: clamp(2.15rem, 3.7vw, 4.4rem);
+}
+
+.modern-experience-heading-entry > p {
+  margin-top: var(--modern-space-4);
+  font-family: var(--modern-font-display);
+  font-size: clamp(0.72rem, 1vw, 0.9rem);
+}
+
+.modern-experience-navigation-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1rem, 2vw, 2rem);
+  background: color-mix(in srgb, var(--modern-accent-green) var(--modern-experience-panel-fill), var(--modern-panel));
+}
+
+.modern-experience-arrows {
+  display: flex;
+  justify-content: flex-end;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.modern-experience-arrows button {
+  display: grid;
+  width: clamp(2.6rem, 4vw, 4.25rem);
+  height: clamp(2.6rem, 4vw, 4.25rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--modern-ink);
+  font-family: var(--modern-font-display);
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1;
+  place-items: center;
+}
+
+.modern-experience-arrows button:hover:not(:disabled),
+.modern-experience-arrows button:focus-visible:not(:disabled) {
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+  outline: none;
+}
+
+.modern-experience-arrows button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.modern-experience-progress-copy {
+  display: grid;
+  grid-template-columns: repeat(var(--modern-experience-count), minmax(0, 1fr));
+  justify-items: center;
+  margin-bottom: var(--modern-space-2);
+  font-family: var(--modern-font-display);
+  font-size: 0.68rem;
+}
+
+.modern-experience-progress-copy span:first-child {
+  justify-self: start;
+}
+
+.modern-experience-progress-copy span:last-child {
+  justify-self: end;
+}
+
+.modern-experience-progress {
+  display: grid;
+  grid-template-columns: repeat(var(--modern-experience-segment-count), minmax(0.4rem, 1fr));
+}
+
+.modern-experience-progress span {
+  height: 0.75rem;
+  border: var(--modern-border-width) solid var(--modern-ink);
+  border-right: 0;
+  background: transparent;
+  transition: background-color 400ms ease;
+}
+
+.modern-experience-progress span:last-child {
+  border-right: var(--modern-border-width) solid var(--modern-ink);
+}
+
+.modern-experience-progress span.is-complete {
+  background: var(--modern-ink);
+}
+
+.modern-experience-copy-panel {
+  padding: clamp(1rem, 2vw, 2rem);
+  overflow: auto;
+  background: color-mix(in srgb, var(--modern-accent-gold) var(--modern-experience-panel-fill), var(--modern-panel));
+  scrollbar-color: var(--modern-ink) transparent;
+  scrollbar-width: thin;
+}
+
+.modern-experience-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--modern-space-4);
+  font-family: var(--modern-font-display);
+  font-size: 0.68rem;
+}
+
+.modern-experience-copy-stack {
+  display: grid;
+}
+
+.modern-experience-copy-entry {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.modern-experience-summary {
+  margin: var(--modern-space-5) 0 0;
+  font-size: clamp(1rem, 1.4vw, 1.3rem);
+  line-height: 1.45;
+}
+
+.modern-experience-selected-work > p {
+  margin: var(--modern-space-5) 0 var(--modern-space-3);
+  font-family: var(--modern-font-display);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.modern-experience-selected-work ul {
+  display: grid;
+  gap: var(--modern-space-3);
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.modern-experience-selected-work li {
+  padding-left: var(--modern-space-1);
+  font-size: clamp(0.76rem, 1vw, 0.92rem);
+  line-height: 1.4;
+}
+
+.modern-experience-copy-panel .modern-tag-list {
+  margin-top: var(--modern-space-5);
+}
+
+.modern-experience-art-panel {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--modern-ink) var(--modern-experience-panel-fill), var(--modern-panel));
+  color: var(--modern-panel);
+}
+
+.modern-experience-art-panel::before {
+  position: absolute;
+  top: var(--modern-space-4);
+  right: var(--modern-space-4);
+  z-index: 1;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--modern-accent-blue);
+  box-shadow:
+    -0.85rem 0 0 var(--modern-accent-pink),
+    -1.7rem 0 0 var(--modern-accent-gold);
+  content: "";
+}
+
+@media (max-width: 1050px) {
+  .modern-experience-panels {
+    grid-template-columns: minmax(0, 1.08fr) minmax(14rem, 0.92fr);
+  }
+  .modern-experience-heading-panel h3 { font-size: clamp(2.5rem, 5.8vw, 5rem); }
+}
+
+@media (max-width: 767px) {
+  .modern-experience-section {
+    height: auto;
+    min-height: 0;
+    background: color-mix(in srgb, var(--modern-ink) var(--modern-experience-panel-fill), var(--modern-panel));
+  }
+  .modern-experience-pin { position: static; height: auto; min-height: 0; overflow: visible; }
+  .modern-experience-content { height: auto; }
+  .modern-experience-panels {
+    grid-template-areas: none;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: var(--modern-space-6);
+  }
+  .modern-experience-card { display: grid; min-width: 0; gap: var(--modern-space-3); }
+  .modern-experience-morph { opacity: 1; transform: none; filter: none; }
+  .modern-experience-heading-panel { min-height: 21rem; }
+  .modern-experience-heading-panel h3 { padding-top: 5rem; font-size: clamp(2.4rem, 11vw, 4.4rem); }
+  .modern-experience-heading-entry.has-long-title h3 { font-size: clamp(2.2rem, 9.5vw, 3.8rem); }
+  .modern-experience-copy-panel { overflow: visible; }
+  .modern-experience-art-panel { min-height: 16rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-experience-progress span { transition: none; }
+}

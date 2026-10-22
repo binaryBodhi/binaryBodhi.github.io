@@ -1,0 +1,187 @@
+@media (max-width: 1050px) {
+  .modern-hero-heading-wrap {
+    grid-column: 1 / -1;
+  }
+
+  .modern-hero-widgets {
+    grid-column: 9 / -1;
+  }
+
+  .modern-project-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modern-project-visual {
+    min-height: 24rem;
+    border-top: var(--modern-border-width) solid var(--modern-border);
+    border-left: 0;
+  }
+
+  .modern-background-layout {
+    grid-template-columns: var(--modern-stack-columns, minmax(13rem, 0.55fr) minmax(0, 1.45fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .modern-reveal {
+    transform: translateY(0.75rem);
+  }
+
+  .modern-hero-grid {
+    display: flex;
+    min-height: auto;
+    flex-direction: column;
+  }
+
+  .modern-hero-heading-frame {
+    order: 1;
+    display: block;
+  }
+
+  .modern-hero-heading-wrap {
+    align-self: stretch;
+    padding-top: 5rem;
+    padding-bottom: 4rem;
+  }
+
+  .modern-hero-heading-wrap h1 {
+    font-size: clamp(2rem, 10vw, 3.4rem);
+  }
+
+  .modern-hero-heading-wrap h1 span:nth-child(2) {
+    margin-left: 0;
+  }
+
+  .modern-hero-terminal {
+    order: 3;
+    max-width: none;
+    padding: 0 0.35rem 0.35rem 0;
+  }
+
+  .modern-hero-widgets {
+    order: 4;
+    align-self: stretch;
+    padding-top: 0;
+  }
+
+  .modern-window-content {
+    padding: var(--modern-space-3);
+  }
+
+  .modern-skills-canvas {
+    height: 17rem;
+    min-height: 17rem;
+  }
+
+  .modern-projects-heading,
+  .modern-skills-heading {
+    margin-block: var(--modern-space-7);
+  }
+
+  .modern-project-card {
+    min-height: auto;
+  }
+
+  .modern-project-card h3,
+  .modern-project-empty h3 {
+    margin-top: var(--modern-space-8);
+    font-size: clamp(2.3rem, 12vw, 4.6rem);
+  }
+
+  .modern-project-visual {
+    min-height: 17rem;
+  }
+
+  .modern-project-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .modern-project-progress {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: 2.25rem;
+    border-right: 0;
+    border-bottom: var(--modern-border-width) solid var(--modern-border);
+    border-left: 0;
+  }
+
+  .modern-project-empty .modern-pixel-canvas {
+    min-height: 16rem;
+    border-top: var(--modern-border-width) solid var(--modern-border);
+    border-left: 0;
+  }
+
+  .modern-skill-module {
+    min-height: auto;
+  }
+
+  .modern-background-layout {
+    gap: var(--modern-space-7);
+  }
+
+  .modern-background-heading {
+    position: static;
+  }
+
+  .modern-biography,
+  .modern-education-list {
+    grid-column: 1;
+  }
+
+  .modern-education-card {
+    gap: var(--modern-space-2);
+  }
+
+  .modern-education-card h3,
+  .modern-education-card h3 + p,
+  .modern-education-card strong,
+  .modern-education-card small,
+  .modern-education-card ul {
+    grid-column: 1;
+  }
+
+  .modern-education-card h3 {
+    margin-top: var(--modern-space-3);
+  }
+
+  .modern-contact-grid {
+    grid-template-rows: auto;
+  }
+
+  .modern-contact-copy,
+  .modern-contact-links,
+  .modern-contact-art {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .modern-contact-links {
+    order: 3;
+  }
+
+  .modern-contact-art {
+    order: 2;
+    min-height: 15rem;
+  }
+
+  .modern-footer {
+    min-height: 7rem;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .modern-footer > strong {
+    font-size: clamp(2.8rem, 15vw, 5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .modern-project-visual img {
+    animation: none;
+  }
+}

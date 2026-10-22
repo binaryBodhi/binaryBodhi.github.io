@@ -59,11 +59,7 @@
 
 .theme-transition__frame {
   position: fixed;
-  top: var(--transition-frame-top);
-  left: var(--transition-frame-left);
   z-index: 3;
-  width: var(--transition-frame-width);
-  height: var(--transition-frame-height);
   border: 2px solid var(--transition-paper);
   box-shadow:
     0 0 0 1px var(--transition-ink),
@@ -88,26 +84,6 @@
   background: var(--transition-gold);
 }
 
-.theme-transition__corner--top-left {
-  top: -0.3rem;
-  left: -0.3rem;
-}
-
-.theme-transition__corner--top-right {
-  top: -0.3rem;
-  right: -0.3rem;
-}
-
-.theme-transition__corner--bottom-left {
-  bottom: -0.3rem;
-  left: -0.3rem;
-}
-
-.theme-transition__corner--bottom-right {
-  right: -0.3rem;
-  bottom: -0.3rem;
-}
-
 .theme-transition__retro-tabs {
   position: fixed;
   inset: 0;
@@ -125,6 +101,8 @@
 }
 
 .theme-transition__retro-tab path {
+  animation: theme-transition-retro-tab-draw 390ms
+    cubic-bezier(0.16, 1, 0.3, 1) both;
   fill: none;
   stroke: currentColor;
   stroke-dasharray: 1;
@@ -234,11 +212,6 @@
     color: var(--transition-ink);
     opacity: 0;
   }
-}
-
-.theme-transition__retro-tab path {
-  animation: theme-transition-retro-tab-draw 390ms
-    cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes theme-transition-retro-tab-draw {
