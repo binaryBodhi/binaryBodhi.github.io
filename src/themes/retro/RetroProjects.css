@@ -1,0 +1,62 @@
+.retro-projects {
+  --retro-content-width: 920px;
+}
+
+.retro-projects-intro {
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.retro-projects-list {
+  display: grid;
+  gap: 1.5rem;
+  max-width: var(--retro-content-width);
+  margin-inline: auto;
+}
+
+.retro-project-record {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--retro-ink);
+}
+
+.retro-project-index {
+  margin: 0 0 0.75rem;
+  color: var(--retro-blue);
+  font-size: 0.7rem;
+}
+
+.retro-project-record h2 {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  line-height: 1.5;
+}
+
+.retro-project-description {
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.retro-project-technologies,
+.retro-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.65rem;
+  line-height: 1.6;
+}
+
+.retro-project-technologies {
+  padding: 0;
+  list-style: none;
+}
+
+.retro-project-technologies li {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--retro-rule);
+}
+
+.retro-project-links a {
+  color: var(--retro-blue);
+  text-underline-offset: 0.2rem;
+}

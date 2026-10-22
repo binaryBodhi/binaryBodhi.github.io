@@ -50,14 +50,6 @@
   pointer-events: none;
 }
 
-.modern-hero-now-building {
-  position: absolute;
-  top: var(--modern-space-3);
-  right: var(--modern-space-3);
-  z-index: 3;
-  width: min(21rem, calc(100% - 1.5rem));
-}
-
 .modern-hero-canvas-caption {
   position: absolute;
   bottom: var(--modern-space-3);

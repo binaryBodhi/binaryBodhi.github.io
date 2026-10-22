@@ -23,13 +23,7 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
       index="03"
       label="Project archive"
     >
-      <Reveal className="modern-projects-heading">
-        <h2 id="modern-projects-title">Projects, assembled as working systems.</h2>
-        <p>
-          Case studies connect the problem, implementation, and result—not just
-          the final screenshot.
-        </p>
-      </Reveal>
+      <h2 id="modern-projects-title" className="modern-visually-hidden">Projects</h2>
 
       {activeProject ? (
         <Reveal className="modern-project-stage" delay={80}>

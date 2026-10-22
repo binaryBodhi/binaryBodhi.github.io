@@ -1,4 +1,3 @@
-.modern-projects-heading h2,
 .modern-skills-heading h2,
 .modern-background-heading h2,
 .modern-contact-copy h2 {
@@ -10,7 +9,6 @@
   line-height: 0.9;
 }
 
-.modern-projects-heading p,
 .modern-skills-heading p {
   max-width: 38rem;
   margin: var(--modern-space-5) 0 0;

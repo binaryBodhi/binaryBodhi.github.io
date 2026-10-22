@@ -1,4 +1,3 @@
-.modern-projects-heading,
 .modern-skills-heading {
   display: grid;
   grid-template-columns: var(--modern-stack-columns, minmax(0, 1fr) minmax(16rem, 0.65fr));
@@ -7,15 +6,20 @@
   margin-block: clamp(2rem, 6vw, 6rem);
 }
 
-.modern-project-stage {
-  border: var(--modern-border-width) solid var(--modern-border);
+.modern-projects-section > .modern-section-body {
+  padding-inline: var(--modern-section-padding, clamp(1rem, 2vw, 1.75rem));
 }
 
 .modern-project-card {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 1.1fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
+  gap: var(--modern-space-3);
   min-height: 34rem;
-  background: var(--modern-accent-pink);
+}
+
+.modern-project-card-copy,
+.modern-project-visual {
+  border: var(--modern-border-width) solid var(--modern-panel);
 }
 
 .modern-project-card-copy {
@@ -23,6 +27,7 @@
   min-width: 0;
   flex-direction: column;
   padding: clamp(1.25rem, 4vw, 3.5rem);
+  background: var(--modern-accent-pink);
 }
 
 .modern-project-card-meta {
@@ -73,12 +78,19 @@
 }
 
 .modern-project-visual {
+  position: relative;
   display: grid;
   min-width: 0;
   overflow: hidden;
-  border-left: var(--modern-border-width) solid var(--modern-border);
   background: var(--modern-ink);
   place-items: stretch;
+}
+
+/* Canvas bitmap resizes must not feed back into the grid's automatic height. */
+.modern-project-visual > .modern-pixel-canvas,
+.modern-project-visual > img {
+  position: absolute;
+  inset: 0;
 }
 
 .modern-project-visual img {
@@ -103,7 +115,7 @@
 .modern-project-controls {
   display: grid;
   grid-template-columns: auto minmax(6rem, 1fr) auto;
-  border-top: var(--modern-border-width) solid var(--modern-border);
+  border: var(--modern-border-width) solid var(--modern-border);
 }
 
 .modern-project-controls button {

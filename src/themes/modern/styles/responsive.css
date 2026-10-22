@@ -8,13 +8,11 @@
   }
 
   .modern-project-card {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(14rem, 0.92fr);
   }
 
   .modern-project-visual {
     min-height: 24rem;
-    border-top: var(--modern-border-width) solid var(--modern-border);
-    border-left: 0;
   }
 
   .modern-background-layout {
@@ -73,12 +71,12 @@
     min-height: 17rem;
   }
 
-  .modern-projects-heading,
   .modern-skills-heading {
     margin-block: var(--modern-space-7);
   }
 
   .modern-project-card {
+    grid-template-columns: minmax(0, 1fr);
     min-height: auto;
   }
 

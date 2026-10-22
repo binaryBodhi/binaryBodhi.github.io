@@ -31,7 +31,6 @@ export function HeroSection({ data }: { data: PortfolioData }) {
     .split(/(?<=,)\s+|\s*\|\s*/)
     .filter(Boolean)
   const currentExperience = data.experience.find((item) => !item.period.end)
-  const primarySkills = data.skills.flatMap((group) => group.skills).slice(0, 6)
 
   return (
     <SectionFrame
@@ -46,9 +45,6 @@ export function HeroSection({ data }: { data: PortfolioData }) {
             <PixelCanvas variant="hero" lifeSettings={lifeSettings} />
           </div>
           <LifeControls settings={lifeSettings} onChange={setLifeSettings} />
-          {currentExperience && (
-            <SideWidget className="modern-hero-now-building" label="Now building" value={currentExperience.organization} accent="gold" />
-          )}
           <Reveal className="modern-hero-heading-wrap">
             <h1 id="modern-about-title" tabIndex={-1}>
               {headlineParts.map((part) => (
@@ -71,8 +67,12 @@ export function HeroSection({ data }: { data: PortfolioData }) {
                 <p>{data.profile.name}</p>
                 <p><span>$</span> current_role</p>
                 <p>{currentExperience?.role ?? data.profile.headline}</p>
-                <p><span>$</span> toolchain --summary</p>
-                <p>{primarySkills.join(" / ")}</p>
+                {currentExperience && (
+                  <>
+                    <p><span>$</span> now_building</p>
+                    <p>{currentExperience.organization}</p>
+                  </>
+                )}
               </div>
             </WindowPanel>
           </Reveal>

@@ -2,6 +2,7 @@ import { useState } from "react"
 import type { PortfolioData } from "../../data/types"
 import { RetroEducation } from "./RetroEducation"
 import { RetroExperience } from "./RetroExperience"
+import { RetroProjects } from "./RetroProjects"
 import "./RetroPortfolio.css"
 
 interface RetroPortfolioProps {
@@ -12,12 +13,13 @@ interface RetroPortfolioProps {
 export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
   const [linksAreVisible, setLinksAreVisible] = useState(false)
   const [activeView, setActiveView] = useState<
-    "home" | "education" | "experience"
+    "home" | "education" | "experience" | "projects"
   >("home")
   const activeHeadingId = {
     home: "retro-name",
     education: "education-title",
     experience: "experience-title",
+    projects: "projects-title",
   }[activeView]
 
   return (
@@ -49,7 +51,7 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
         </button>
 
         <nav className="retro-navigation" aria-label="Portfolio navigation">
-          {(["education", "experience"] as const).map((view) => (
+          {(["education", "experience", "projects"] as const).map((view) => (
             <button
               key={view}
               className={activeView === view ? "is-active" : undefined}
@@ -57,7 +59,7 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
               aria-pressed={activeView === view}
               onClick={() => setActiveView(view)}
             >
-              {view === "education" ? "Education" : "Experience"}
+              {{ education: "Education", experience: "Experience", projects: "Projects" }[view]}
             </button>
           ))}
           {data.profile.email && <a href={`mailto:${data.profile.email}`}>Contact</a>}
@@ -83,6 +85,8 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
           </div>
         ) : activeView === "experience" ? (
           <RetroExperience experience={data.experience} />
+        ) : activeView === "projects" ? (
+          <RetroProjects projects={data.projects ?? []} />
         ) : (
           <RetroEducation education={data.education} />
         )}

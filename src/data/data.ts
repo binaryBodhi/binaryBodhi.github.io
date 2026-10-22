@@ -26,6 +26,40 @@ export const portfolioData = {
       username: "Shantanu Kshatriya"
     }
   ],
+  projects:[
+    {
+      id: "playlist-creation-service",
+      title: "Playlist Creation Service",
+      summary: "Simple service to create a new Spotify playlist from an existing playlist based on song release year.",
+      description:
+        "Simple service to create new playlist from existing Spotify playlist based on song release year.",
+      technologies: ["Python", "Spotipy", "Flask"],
+      highlights: ["Creates a new playlist from an existing Spotify playlist", "Groups songs by release year", "Python-based service"],
+      links: [{label: "GitHub",url: "https://github.com/binaryBodhi/playlist-creation-service", kind: "source"}],
+      featured: true,
+    },
+    {
+      id: "tripwithme",
+      title: "TripWithMe",
+      summary:
+        "A full-stack ride-sharing and cab booking platform that helps users create trips, find matches along shared routes, and split travel costs efficiently.",
+      description:
+        "TripWithMe is a full-stack web application designed to simplify cab booking and trip coordination. Users can create trips, search for other travelers heading in the same direction, join rides, and split costs with fellow commuters. The platform includes secure authentication, trip management, trip history, real-time notifications, and a metrics dashboard to track travel activity.",
+      technologies: [
+        "React", "Vite", "JavaScript", "Python", "FastAPI", "MongoDB", "Beanie", "JWT", "Axios", "CSS", "Docker", "Docker Compose", "Pytest", "Vitest", "React Testing Library"
+      ],
+      highlights: [
+        "Secure JWT-based authentication and user registration",
+        "Create, search, join, and leave trips",
+        "Real-time trip updates and notifications",
+        "Past trip history with repeat trip functionality",
+        "Responsive, modern UI with dark/light mode support",
+        "Metrics dashboard for tracking completed rides and travelers"
+      ],
+      links: [{label: "GitHub", url: "https://github.com/binaryBodhi/playlist-creation-service", kind: "source"}],
+      featured: true
+    }
+  ],
   experience: [
     {
       id: "bootlabs",
