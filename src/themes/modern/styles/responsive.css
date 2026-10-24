@@ -7,14 +7,6 @@
     grid-column: 9 / -1;
   }
 
-  .modern-project-card {
-    grid-template-columns: minmax(0, 1.08fr) minmax(14rem, 0.92fr);
-  }
-
-  .modern-project-visual {
-    min-height: 24rem;
-  }
-
   .modern-background-layout {
     grid-template-columns: var(--modern-stack-columns, minmax(13rem, 0.55fr) minmax(0, 1.45fr));
   }
@@ -80,14 +72,14 @@
     min-height: auto;
   }
 
-  .modern-project-card h3,
   .modern-project-empty h3 {
     margin-top: var(--modern-space-8);
     font-size: clamp(2.3rem, 12vw, 4.6rem);
   }
 
-  .modern-project-visual {
-    min-height: 17rem;
+  .modern-project-title-wheel {
+    margin-top: var(--modern-space-5);
+    font-size: clamp(2rem, 8vw, 4.6rem);
   }
 
   .modern-project-controls {
@@ -100,12 +92,6 @@
     min-height: 2.25rem;
     border-right: 0;
     border-bottom: var(--modern-border-width) solid var(--modern-border);
-    border-left: 0;
-  }
-
-  .modern-project-empty .modern-pixel-canvas {
-    min-height: 16rem;
-    border-top: var(--modern-border-width) solid var(--modern-border);
     border-left: 0;
   }
 
@@ -179,7 +165,4 @@
     transform: none;
   }
 
-  .modern-project-visual img {
-    animation: none;
-  }
 }

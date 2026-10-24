@@ -4,7 +4,7 @@ import { BulletList } from "../../../shared/BulletList"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
-export function AboutSection({ education, profile }: Pick<PortfolioData, "education" | "profile">) {
+export function AboutSection({ education }: Pick<PortfolioData, "education">) {
   return (
     <SectionFrame
       name="background"
@@ -17,14 +17,6 @@ export function AboutSection({ education, profile }: Pick<PortfolioData, "educat
             <span />
           </span>
           <h2 id="modern-background-title">Built through study and practice.</h2>
-        </Reveal>
-
-        <Reveal className="modern-biography" delay={70}>
-          <p className="modern-mono-label">About the developer</p>
-          {profile.biography.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-          {profile.tagline && <strong>{profile.tagline}</strong>}
         </Reveal>
 
         <div className="modern-education-list">

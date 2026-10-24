@@ -12,13 +12,14 @@
 
 .modern-project-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--modern-space-3);
   min-height: 34rem;
+  border: var(--modern-border-width) solid var(--modern-border);
+  border-top: 0;
 }
 
-.modern-project-card-copy,
-.modern-project-visual {
+.modern-project-card-copy {
   border: var(--modern-border-width) solid var(--modern-panel);
 }
 
@@ -37,7 +38,6 @@
   font-size: 0.68rem;
 }
 
-.modern-project-card h3,
 .modern-project-empty h3 {
   max-width: 12ch;
   margin: auto 0 var(--modern-space-5);
@@ -47,13 +47,109 @@
   line-height: 0.9;
 }
 
-.modern-project-card-copy > p,
+.modern-project-number {
+  display: inline-flex;
+}
+
+.modern-project-title-wheel {
+  position: relative;
+  margin: auto 0 var(--modern-space-5);
+  overflow: hidden;
+  font-size: clamp(2.7rem, 5.5vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  touch-action: pan-x;
+  user-select: none;
+  cursor: url("../assets/terminal-cursor.svg") 2 2, pointer;
+  mask-image: linear-gradient(transparent, #000 5%, #000 95%, transparent);
+}
+
+.modern-project-title-wheel:focus-visible {
+  outline: 2px dashed var(--modern-ink);
+  outline-offset: 4px;
+}
+
+/* Reserve the tallest title so navigation cannot change the card's height. */
+.modern-project-title-size {
+  display: grid;
+  padding-block: 0.8em;
+  visibility: hidden;
+}
+
+.modern-project-title-size > span {
+  grid-area: 1 / 1;
+}
+
+.modern-project-title-size > span,
+.modern-project-title-slot > span {
+  max-width: 12ch;
+  overflow-wrap: anywhere;
+}
+
+.modern-project-title-slot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
 .modern-project-empty p {
   max-width: 42rem;
   line-height: 1.5;
 }
 
-.modern-project-card .modern-tag-list {
+/* Hidden entries still size both rows, keeping the card steady as copy blends. */
+.modern-project-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  flex: none;
+}
+
+.modern-project-detail-entry {
+  display: grid;
+  grid-area: 1 / 1 / 3 / 2;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  opacity: var(--modern-experience-weight, 1);
+  filter: blur(calc((1 - var(--modern-experience-weight, 1)) * 4px));
+}
+
+.modern-project-detail-entry > p {
+  grid-row: 1;
+  max-width: 42rem;
+  margin: 0;
+  line-height: 1.5;
+  align-self: start;
+}
+
+.modern-project-detail-entry > .modern-project-technologies {
+  grid-row: 2;
+  max-width: 42rem;
+  align-self: start;
+  align-content: start;
+}
+
+.modern-project-link-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.modern-project-link-stack > .modern-project-links {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  align-self: start;
+}
+
+.modern-project-link-stack > .is-active {
+  visibility: visible;
+}
+
+.modern-project-card .modern-project-technologies {
   margin-top: var(--modern-space-5);
 }
 
@@ -75,41 +171,6 @@
   font-family: var(--modern-font-display);
   font-size: 0.62rem;
   text-decoration: none;
-}
-
-.modern-project-visual {
-  position: relative;
-  display: grid;
-  min-width: 0;
-  overflow: hidden;
-  background: var(--modern-ink);
-  place-items: stretch;
-}
-
-/* Canvas bitmap resizes must not feed back into the grid's automatic height. */
-.modern-project-visual > .modern-pixel-canvas,
-.modern-project-visual > img {
-  position: absolute;
-  inset: 0;
-}
-
-.modern-project-visual img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: modern-project-image-in 680ms steps(8, end) both;
-}
-
-@keyframes modern-project-image-in {
-  from {
-    clip-path: inset(0 100% 0 0);
-    filter: contrast(1.5) grayscale(1);
-  }
-
-  to {
-    clip-path: inset(0);
-    filter: none;
-  }
 }
 
 .modern-project-controls {
@@ -155,7 +216,7 @@
 
 .modern-project-empty {
   display: grid;
-  grid-template-columns: var(--modern-stack-columns, minmax(0, 1fr) minmax(17rem, 0.7fr));
+  grid-template-columns: minmax(0, 1fr);
   min-height: 28rem;
   border: var(--modern-border-width) solid var(--modern-border);
   background: var(--modern-accent-gold);
@@ -172,6 +233,51 @@
   font-size: 0.68rem;
 }
 
-.modern-project-empty .modern-pixel-canvas {
-  border-left: var(--modern-border-width) solid var(--modern-border);
+
+.modern-project-heading-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  margin-block: auto var(--modern-space-5);
+}
+
+.modern-project-heading-row .modern-project-title-wheel {
+  margin: 0;
+}
+
+.modern-project-mark {
+  display: block;
+  width: min(100%, 15rem);
+  height: auto;
+  aspect-ratio: 1;
+  justify-self: center;
+  fill: var(--modern-ink);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .modern-project-heading-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    margin-top: var(--modern-space-5);
+  }
+
+  .modern-project-mark {
+    width: 6rem;
+    justify-self: end;
+  }
+}
+
+.modern-project-description,
+.modern-project-technologies {
+  position: relative;
+}
+
+.modern-project-description canvas,
+.modern-project-technologies canvas {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  pointer-events: none;
 }

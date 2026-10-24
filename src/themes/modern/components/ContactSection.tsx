@@ -1,6 +1,6 @@
 import { getContactLinks } from "../../../shared/contactLinks"
 import type { PortfolioData } from "../../../data/types"
-import { PixelCanvas } from "./PixelCanvas"
+import { Tetris } from "./TetrisGame"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 
@@ -38,7 +38,7 @@ export function ContactSection({ profile, socialLinks }: Pick<PortfolioData, "pr
         </Reveal>
 
         <Reveal className="modern-contact-art" delay={120}>
-          <PixelCanvas variant="contact" />
+          <Tetris />
         </Reveal>
       </div>
 

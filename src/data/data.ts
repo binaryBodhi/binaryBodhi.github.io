@@ -6,7 +6,7 @@ export const portfolioData = {
     name: "Shantanu Kshatriya",
     headline: "Complex systems, simple solutions.",
     biography: [
-      "I am batman"
+      "I am a software engineer with a passion for building complex systems and simplifying them into elegant solutions. My expertise spans full-stack development, and artificial intelligence, allowing me to tackle diverse challenges across the software development domains.",
     ],
     email: "shantanu.kx@gmail.com"
   },
@@ -44,7 +44,7 @@ export const portfolioData = {
       summary:
         "A full-stack ride-sharing and cab booking platform that helps users create trips, find matches along shared routes, and split travel costs efficiently.",
       description:
-        "TripWithMe is a full-stack web application designed to simplify cab booking and trip coordination. Users can create trips, search for other travelers heading in the same direction, join rides, and split costs with fellow commuters. The platform includes secure authentication, trip management, trip history, real-time notifications, and a metrics dashboard to track travel activity.",
+        "TripWithMe is a full-stack web application designed to simplify cab booking and trip coordination.",
       technologies: [
         "React", "Vite", "JavaScript", "Python", "FastAPI", "MongoDB", "Beanie", "JWT", "Axios", "CSS", "Docker", "Docker Compose", "Pytest", "Vitest", "React Testing Library"
       ],
@@ -56,7 +56,23 @@ export const portfolioData = {
         "Responsive, modern UI with dark/light mode support",
         "Metrics dashboard for tracking completed rides and travelers"
       ],
-      links: [{label: "GitHub", url: "https://github.com/binaryBodhi/playlist-creation-service", kind: "source"}],
+      links: [{label: "GitHub", url: "https://github.com/binaryBodhi/tripWithME", kind: "source"}],
+      featured: true
+    }, 
+    {
+      id: "ai-code-bug-predictor",
+      title: "AI Code Reviewer & Bug Predictor",
+      summary:
+        "An AI-powered C code bug prediction app that uses CodeBERT embeddings and a trained machine learning classifier to analyze code snippets and flag buggy vs. clean code in real time.",
+      description:
+        "This project combines transformer-based code understanding with a practical web interface to help predict whether a C code snippet is likely to contain bugs.",
+      technologies: [
+        "Python","Flask", "CodeBERT", "Hugging Face Transformers", "scikit-learn", "Random Forest Classifier", "NumPy","joblib","JavaScript", "HTML", "CSS", "Tailwind CSS", "C", "Machine Learning", "Git"
+      ],
+      highlights: [
+        "Predicts whether submitted C code is buggy or clean","Uses transformer-based embeddings from Microsoft CodeBERT","Returns confidence score alongside the prediction", "Built with a Flask backend and lightweight browser UI", "Trained on the CodeXGLUE defect detection dataset", "Includes unit tests for backend validation"
+      ],
+      links: [{label: "GitHub", url: "https://github.com/binaryBodhi/tripWithME", kind: "source"}],
       featured: true
     }
   ],

@@ -12,6 +12,7 @@
 }
 
 .modern-background-heading {
+  grid-row: span 2;
   position: sticky;
   top: var(--modern-space-5);
   align-self: start;

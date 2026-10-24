@@ -4,7 +4,6 @@ import { getScrollOffset } from "../../shared/dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import type { PortfolioData } from "../../data/types"
-import { AboutSection } from "./components/AboutSection"
 import { ContactSection } from "./components/ContactSection"
 import { ExperienceSection } from "./components/ExperienceSection"
 import { HeroSection } from "./components/HeroSection"
@@ -177,8 +176,7 @@ export function ModernPortfolio({ data, onSwitchTheme }: ModernPortfolioProps) {
               />
             </div>
             <ProjectsSection projects={data.projects ?? []} />
-            <SkillsSection skills={data.skills} />
-            <AboutSection education={data.education} profile={data.profile} />
+            <SkillsSection skills={data.skills} profile={data.profile} education={data.education} />
             <ContactSection profile={data.profile} socialLinks={data.socialLinks} />
           </main>
         </div>

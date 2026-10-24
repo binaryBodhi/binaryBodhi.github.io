@@ -1,82 +1,379 @@
-/* Skills */
-
+/* A small desktop for the tools of the trade. */
 .modern-skills-section {
   background: var(--modern-accent-slate);
 }
 
-.modern-skills-heading {
-  align-items: stretch;
+.modern-skills-section > .modern-section-body {
+  display: flex;
+  flex-direction: column;
 }
 
-.modern-skills-heading > .modern-reveal:first-child {
-  align-self: end;
+.modern-skills-monitor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(10px, 1.8vw, 24px) clamp(10px, 1.8vw, 24px) 0;
+  border: 2px solid var(--modern-ink);
+  border-radius: 18px;
+  background: #bfc0ba;
 }
 
-.modern-skills-canvas {
-  min-height: 20rem;
+.modern-skills-glass-defs {
+  position: absolute;
+  pointer-events: none;
+}
+
+.modern-skills-glass-rim {
+  display: flex;
+  flex: 1;
+  padding: 5px;
+  clip-path: url(#modern-skills-glass-curve);
+  background: #383e38;
+}
+
+.modern-skills-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: clamp(430px, 47vw, 620px);
   overflow: hidden;
-  border: var(--modern-border-width) solid var(--modern-border);
+  isolation: isolate;
+  border: 0;
+  clip-path: url(#modern-skills-glass-curve);
+  padding: 22px clamp(16px, 2.5vw, 34px) 20px;
+  color: #202820;
+  background: #a3ada1;
 }
 
-.modern-skills-grid {
+.modern-skills-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.13;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, #28342b 2px 3px);
+}
+
+.modern-skills-menubar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid #465146;
+  background: #c0c7b970;
+  font: 10px var(--modern-font-display);
+  letter-spacing: 0.08em;
+}
+
+.modern-skills-workspace {
   display: grid;
-  grid-template-columns: var(--modern-stack-columns, repeat(2, minmax(0, 1fr)));
-  border-top: var(--modern-border-width) solid var(--modern-border);
-  border-left: var(--modern-border-width) solid var(--modern-border);
+  align-items: center;
+  flex: 1;
+  padding: clamp(20px, 3vw, 40px);
 }
 
-.modern-skill-module {
-  height: 100%;
-  min-height: 18rem;
-  border-right: var(--modern-border-width) solid var(--modern-border);
-  border-bottom: var(--modern-border-width) solid var(--modern-border);
-  background: var(--modern-panel);
-  transition:
-    background-color var(--modern-duration-medium) var(--modern-ease-standard),
-    color var(--modern-duration-medium) var(--modern-ease-standard);
+.modern-skills-idle {
+  text-align: center;
+  color: #3e4b3f;
 }
 
-.modern-skill-module:hover,
-.modern-skill-module:focus-within {
-  background: var(--modern-ink);
-  color: var(--modern-panel);
+.modern-skills-idle-symbol {
+  display: block;
+  font: clamp(44px, 6vw, 76px) var(--modern-font-display);
+  opacity: 0.55;
 }
 
-.modern-skill-module header {
-  font-family: var(--modern-font-display);
-  font-size: clamp(0.66rem, 1vw, 0.82rem);
+.modern-skills-idle p {
+  margin: 24px 0 12px;
+  font: clamp(12px, 1.5vw, 17px) var(--modern-font-display);
+}
+
+.modern-skills-idle > span:last-child {
+  font-size: 13px;
+}
+
+.modern-skills-dock {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  align-self: center;
+  max-width: calc(100% - 24px);
+  gap: clamp(3px, 1vw, 14px);
+  padding: 12px clamp(6px, 1.5vw, 22px) 6px;
+  margin: 12px 12px 20px;
+  border: 1px solid #515d50;
+  border-radius: 13px;
+  background: #d0d5c6a8;
+  box-shadow: inset 0 1px 0 #f1f2e3a0, 0 6px 12px #26382725;
+}
+
+.modern-skills-dock-button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(44px, 7.8vw, 94px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.modern-skills-dock-icon {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--modern-space-4);
-  align-items: baseline;
-  padding: var(--modern-space-4);
-  border-bottom: var(--modern-border-width) solid currentColor;
+  place-items: center;
+  width: clamp(36px, 5vw, 60px);
+  aspect-ratio: 1;
+  border: 2px solid #343b33;
+  border-radius: 7px;
+  background: #bfc3b9;
+  transition: transform 160ms ease;
 }
 
-.modern-skill-module h3 {
-  font-size: inherit;
-  margin: 0;
+.modern-skills-dock-icon svg { width: 65%; height: 65%; }
+.modern-skills-dock-button:hover .modern-skills-dock-icon,
+.modern-skills-dock-button:focus-visible .modern-skills-dock-icon { transform: translateY(-7px); }
+.modern-skills-dock-button:focus-visible { outline: 2px dashed #263827; outline-offset: 4px; border-radius: 4px; }
+.modern-skills-dock-label { margin-top: 9px; font-size: 9px; white-space: nowrap; }
+.modern-skills-dock-indicator { width: 4px; height: 4px; margin-top: 5px; background: transparent; }
+.modern-skills-dock-button.is-active .modern-skills-dock-indicator { background: currentColor; }
+
+.modern-skills-dock-tooltip {
+  position: absolute;
+  bottom: calc(100% + 17px);
+  z-index: 4;
+  width: max-content;
+  max-width: 200px;
+  padding: 7px 10px;
+  border: 1px solid #354234;
+  background: #d7dacc;
+  font-size: 11px;
+  opacity: 0;
+  pointer-events: none;
+}
+.modern-skills-dock-button:hover .modern-skills-dock-tooltip,
+.modern-skills-dock-button:focus-visible .modern-skills-dock-tooltip { opacity: 1; }
+.modern-skills-dock-button:first-child .modern-skills-dock-tooltip { left: 0; }
+.modern-skills-dock-button:last-child .modern-skills-dock-tooltip { right: 0; }
+
+.modern-skills-window {
+  width: min(100%, 580px);
+  margin-inline: auto;
+  border: 2px solid #354234;
+  background: #cbd0c0;
+  box-shadow: 6px 7px 0 #35423440;
 }
 
-.modern-skill-module ul {
-  display: grid;
-  grid-template-columns: var(--modern-stack-columns, repeat(2, minmax(0, 1fr)));
-  gap: var(--modern-space-3);
-  margin: 0;
-  padding: var(--modern-space-5);
-  list-style: none;
-}
-
-.modern-skill-module li {
+.modern-skills-titlebar {
   display: flex;
   align-items: center;
-  gap: var(--modern-space-2);
-  font-size: 0.86rem;
+  gap: 12px;
+  padding: 10px;
+  border-bottom: 2px solid #354234;
+  background: #b5beac;
+}
+.modern-skills-titlebar h3 { margin: 0; font: clamp(9px, 1.1vw, 12px)/1.6 var(--modern-font-display); }
+.modern-skills-close { display: grid; place-items: center; flex: 0 0 22px; height: 22px; padding: 0; border: 1px solid #354234; background: #d6c1b3; color: #263827; font: 20px/1 monospace; cursor: pointer; }
+.modern-skills-close:focus-visible { outline: 2px solid #263827; outline-offset: 3px; }
+.modern-skills-window-grip { flex: 1; min-width: 12px; height: 13px; background: repeating-linear-gradient(0deg, #54614e 0 1px, transparent 1px 4px); }
+.modern-skills-window-content { padding: clamp(16px, 2.5vw, 28px); }
+.modern-skills-directory { margin: 0 0 22px; font: 9px/1.7 var(--modern-font-display); opacity: 0.65; overflow-wrap: anywhere; }
+.modern-skills-window-content ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; padding: 0; margin: 0; list-style: none; }
+.modern-skills-window-content li { display: flex; gap: 10px; align-items: center; font-size: clamp(13px, 1.5vw, 17px); }
+.modern-skills-window-content li span { color: #63794e; }
+.modern-skills-item-count { margin: 24px 0 0; padding-top: 12px; border-top: 1px solid #8b9881; font: 9px var(--modern-font-display); }
+.modern-skills-monitor-chin { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; min-height: 40px; padding-inline: 8px; font: 8px var(--modern-font-display); letter-spacing: 0.12em; color: #4a5147; }
+.modern-skills-power { width: 7px; height: 7px; background: #56764a; border: 1px solid #384734; box-shadow: 0 0 5px #6e9a56; }
+
+@media (max-width: 600px) {
+  .modern-skills-screen { min-height: 480px; }
+  .modern-skills-menubar { padding: 12px 10px; font-size: 8px; }
+  .modern-skills-workspace { padding: 20px 12px; }
+  .modern-skills-dock { gap: 4px; padding-inline: 7px; }
+  .modern-skills-dock-button { width: 42px; }
+  .modern-skills-dock-label { display: none; }
+  .modern-skills-monitor-chin { font-size: 6px; letter-spacing: 0; }
+  .modern-skills-window-content ul { gap: 12px; }
 }
 
-.modern-skill-module li span {
-  width: 0.42rem;
-  height: 0.42rem;
-  flex: 0 0 auto;
-  background: var(--modern-accent-gold);
+@media (prefers-reduced-motion: reduce) {
+  .modern-skills-dock-icon { transition: none; }
 }
+
+/* Biography wallpaper stays behind independently opened skill windows. */
+.modern-skills-workspace {
+  position: relative;
+  isolation: isolate;
+  min-height: 340px;
+}
+
+.modern-skills-wallpaper {
+  width: min(100%, 720px);
+  margin: auto;
+  padding: clamp(8px, 2vw, 24px);
+  color: #354333;
+  font-size: clamp(16px, 2vw, 25px);
+  line-height: 1.6;
+}
+
+.modern-skills-wallpaper-label {
+  margin-bottom: 24px;
+  font: clamp(10px, 1.3vw, 14px)/1.6 var(--modern-font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.modern-skills-wallpaper strong { font-size: 0.8em; }
+
+.modern-skills-workspace .modern-skills-window {
+  position: absolute;
+  width: min(72%, 580px);
+  max-height: 88%;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.modern-skills-window .modern-skills-window-content {
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.modern-skills-window.is-front .modern-skills-titlebar { background: #a3b198; }
+.modern-skills-dock { position: relative; z-index: 6; flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .modern-skills-workspace { min-height: 430px; }
+  .modern-skills-workspace .modern-skills-window { width: 77%; }
+  .modern-skills-window-content ul { grid-template-columns: 1fr; }
+  .modern-skills-wallpaper { font-size: 15px; line-height: 1.5; }
+}
+
+.modern-skills-titlebar {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.modern-skills-titlebar:active { cursor: grabbing; }
+.modern-skills-titlebar:focus-visible { outline: 2px dashed #263827; outline-offset: -5px; }
+
+/* Classic monochrome Mac cursors, scoped to the desktop display. */
+.modern-skills-screen {
+  cursor: url("../assets/mac-arrow.svg") 3 2, default;
+}
+.modern-skills-screen button {
+  cursor: url("../assets/mac-hand.svg") 8 2, pointer;
+}
+.modern-skills-screen .modern-skills-titlebar {
+  cursor: url("../assets/mac-grab.svg") 9 9, grab;
+}
+.modern-skills-screen .modern-skills-titlebar:active {
+  cursor: url("../assets/mac-grab.svg") 9 9, grabbing;
+}
+
+.modern-skills-traffic-lights { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.modern-skills-traffic-light {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid #3f493d;
+  border-radius: 50%;
+  color: #352d24;
+  font: bold 12px/1 monospace;
+}
+.modern-skills-traffic-light.is-close { background: #e47c71; }
+.modern-skills-traffic-light.is-minimize { background: #dfbf67; }
+.modern-skills-traffic-light.is-expand { background: #8cb67a; }
+.modern-skills-traffic-light span {
+  position: relative;
+  display: block;
+  width: 8px;
+  height: 8px;
+  font-size: 0;
+  opacity: 0;
+}
+.modern-skills-traffic-light span::before,
+.modern-skills-traffic-light span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.modern-skills-traffic-light.is-close span::before { transform: translate(-50%, -50%) rotate(45deg); }
+.modern-skills-traffic-light.is-close span::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.modern-skills-traffic-light.is-expand span::after { transform: translate(-50%, -50%) rotate(90deg); }
+.modern-skills-traffic-light.is-minimize span::after { display: none; }
+.modern-skills-traffic-lights:hover span,
+.modern-skills-traffic-light:focus-visible span { opacity: 1; }
+.modern-skills-traffic-light:focus-visible { outline: 2px solid #263827; outline-offset: 3px; }
+.modern-skills-workspace .modern-skills-window[hidden] { display: none; }
+.modern-skills-workspace .modern-skills-window.is-expanded { width: 96%; height: 94%; max-height: 94%; }
+
+.modern-skills-desktop-icons {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: grid;
+  gap: 22px;
+  width: 110px;
+}
+.modern-skills-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #283526;
+}
+.modern-skills-desktop-icon svg { width: 42px; height: 42px; }
+.modern-skills-desktop-icon span { font: 9px/1.6 var(--modern-font-display); text-align: center; }
+.modern-skills-desktop-icon:hover,
+.modern-skills-desktop-icon:focus-visible { border: 1px dashed currentColor; outline: none; background: #cbd0c030; }
+.modern-skills-education-details h4 { margin: 0 0 12px; font: 15px/1.5 var(--modern-font-display); }
+.modern-skills-education-details p { line-height: 1.5; }
+.modern-skills-education-details ul { display: block; list-style: disc; padding-left: 20px; }
+.modern-skills-education-details li { display: list-item; margin-block: 10px; }
+.modern-skills-wallpaper { padding-right: 110px; }
+@media (max-width: 600px) {
+  .modern-skills-desktop-icons { position: relative; top: auto; right: auto; width: auto; display: flex; justify-content: flex-end; gap: 12px; }
+  .modern-skills-desktop-icon { width: 100px; }
+  .modern-skills-wallpaper { padding-right: 8px; }
+}
+
+.modern-music-display { display: flex; align-items: center; gap: 20px; padding: 16px; border: 1px solid #54614e; background: #aebba3; }
+.modern-music-note { font: 48px monospace; }
+.modern-music-display p { font: 9px var(--modern-font-display); margin: 0 0 10px; }
+.modern-music-display h4 { font: 14px/1.6 var(--modern-font-display); margin: 0 0 7px; }
+.modern-music-display span { font-size: 13px; }
+.modern-music-display .modern-music-note { font-size: 48px; }
+.modern-music-progress { margin-top: 16px; }
+.modern-music-player input[type="range"] { width: 100%; accent-color: #354234; }
+.modern-music-progress > div { display: flex; justify-content: space-between; font: 10px monospace; }
+.modern-music-controls { display: flex; align-items: center; gap: 10px; margin-block: 16px; }
+.modern-music-player button { background: transparent; color: inherit; border: 1px solid #54614e; padding: 8px 12px; }
+.modern-music-player button:disabled { opacity: 0.4; }
+.modern-music-player button:focus-visible { outline: 2px dashed currentColor; outline-offset: 2px; }
+.modern-music-controls .modern-music-play { background: #aebba3; padding-inline: 20px; }
+.modern-music-controls label { display: flex; align-items: center; gap: 10px; margin-left: auto; font: 9px var(--modern-font-display); }
+.modern-music-controls label input { max-width: 85px; }
+.modern-music-playlist { list-style: none; padding: 0; margin: 0; border-top: 1px solid #89977f; }
+.modern-music-playlist li button { display: grid; grid-template-columns: 24px 1fr 10px; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; border-bottom: 1px solid #89977f; padding: 12px 8px; }
+.modern-music-playlist button[aria-current="true"] { background: #aebba3; }
+.modern-music-playlist strong { display: block; font-size: 13px; font-weight: 500; }
+.modern-music-playlist small { display: block; margin-top: 4px; font-size: 11px; }
+.modern-music-status { font-size: 12px; line-height: 1.5; }
+.modern-music-add { font: 9px/1.6 var(--modern-font-display); }
+@media (max-width: 600px) { .modern-music-controls { flex-wrap: wrap; } .modern-music-controls label { width: 100%; margin-left: 0; } .modern-music-display { padding: 10px; gap: 10px; } .modern-music-display h4 { font-size: 11px; } }
