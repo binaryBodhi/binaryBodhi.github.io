@@ -58,8 +58,8 @@ test("standalone letter transitions stop scheduling frames once settled", () => 
 test("shared letters and takeover progress rely on their external clock", () => {
   assert.equal(needsAnimationFrame("mark", { ...markOptions, markWeights: () => ({ B: 0.5, J: 0.5 }) }, 300, false), false)
   assert.equal(needsAnimationFrame("takeover", markOptions, 300, false), false)
-  assert.equal(needsAnimationFrame("skills", markOptions, 300, false), true)
-  assert.equal(needsAnimationFrame("skills", markOptions, 300, true), false)
+  assert.equal(needsAnimationFrame("mark", markOptions, 300, true), false)
+  assert.equal(needsAnimationFrame("hero", { ...markOptions, lifeSettings: () => ({ ...markOptions.lifeSettings(), paused: false }) }, 300, false), true)
   assert.equal(needsAnimationFrame("hero", markOptions, 300, false), false)
 })
 

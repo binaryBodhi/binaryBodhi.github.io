@@ -4,8 +4,6 @@ import type { CanvasPalette } from "./palette"
 export type PixelCanvasVariant =
   | "hero"
   | "mark"
-  | "skills"
-  | "contact"
   | "takeover"
 
 export interface PixelCanvasProps {

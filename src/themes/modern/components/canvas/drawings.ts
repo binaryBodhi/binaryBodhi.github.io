@@ -149,71 +149,9 @@ const drawMark: CanvasDrawer = (context, width, height, time, options) => {
   }
 }
 
-const drawSkills: CanvasDrawer = (context, width, height, time, options) => {
-  context.fillStyle = options.palette.green
-  context.fillRect(0, 0, width, height)
-  context.strokeStyle = options.palette.ink
-  context.lineWidth = 1
-
-  const rows = 8
-  const columns = 10
-  const cellWidth = width / columns
-  const cellHeight = height / rows
-
-  for (let row = 0; row < rows; row += 1) {
-    context.beginPath()
-    for (let column = 0; column < columns; column += 1) {
-      const x = column * cellWidth + cellWidth * 0.5
-      const pulse = Math.sin(time * 0.0014 + row * 0.8 + column * 0.45)
-      const y = row * cellHeight + cellHeight * 0.5 + pulse * cellHeight * 0.18
-      if (column === 0) context.moveTo(x, y)
-      else context.lineTo(x, y)
-    }
-    context.stroke()
-  }
-
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      if ((row * 3 + column * 5) % 7 !== 0) continue
-      const x = column * cellWidth + cellWidth * 0.5
-      const y = row * cellHeight + cellHeight * 0.5
-      context.fillStyle = (row + column) % 3 === 0 ? options.palette.blue : options.palette.ink
-      context.fillRect(x - 3, y - 3, 6, 6)
-    }
-  }
-}
-
-const drawContact: CanvasDrawer = (context, width, height, time, options) => {
-  context.fillStyle = options.palette.pink
-  context.fillRect(0, 0, width, height)
-
-  const cell = Math.max(8, Math.floor(width / 36))
-  const baseline = height * 0.64
-  const columns = Math.ceil(width / cell)
-
-  for (let column = 0; column < columns; column += 1) {
-    const wave = Math.sin(column * 0.48 + time * 0.0012)
-    const secondary = Math.sin(column * 0.19 - time * 0.0008)
-    const towerHeight = Math.max(1, Math.round(4 + wave * 2 + secondary * 3))
-
-    for (let row = 0; row < towerHeight; row += 1) {
-      const highlight = (column + row) % 11 === 0
-      context.fillStyle = highlight ? options.palette.gold : options.palette.ink
-      context.fillRect(
-        column * cell,
-        baseline - row * cell,
-        cell - 2,
-        cell - 2,
-      )
-    }
-  }
-}
-
 export const drawers = {
   hero: drawHero,
   mark: drawMark,
-  skills: drawSkills,
-  contact: drawContact,
   takeover: drawTakeover,
 } satisfies Record<PixelCanvasVariant, CanvasDrawer>
 

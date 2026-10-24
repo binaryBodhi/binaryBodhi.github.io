@@ -10,15 +10,6 @@ interface ProjectDetailsProps {
   reducedMotion: boolean
 }
 
-function DetailContent({ project, weight, reducedMotion }: { project: Project; weight: number; reducedMotion: boolean }) {
-  return (
-    <>
-      <PixelDescription text={project.description ?? project.summary} weight={weight} reducedMotion={reducedMotion} />
-      <PixelTechnologies technologies={project.technologies} weight={weight} reducedMotion={reducedMotion} />
-    </>
-  )
-}
-
 export function ProjectDetails({ projects, activeIndex, reducedMotion }: ProjectDetailsProps) {
   const weights = useExperienceMorph(activeIndex, projects.length, reducedMotion)
 
@@ -28,7 +19,8 @@ export function ProjectDetails({ projects, activeIndex, reducedMotion }: Project
         {projects.map((project, index) => (
           <div key={project.id} className="modern-project-detail-entry"
             {...blendProps(weights[index] ?? 0, index === activeIndex)}>
-            <DetailContent project={project} weight={weights[index] ?? 0} reducedMotion={reducedMotion} />
+            <PixelDescription text={project.description ?? project.summary} weight={weights[index] ?? 0} reducedMotion={reducedMotion} />
+            <PixelTechnologies technologies={project.technologies} weight={weights[index] ?? 0} reducedMotion={reducedMotion} />
           </div>
         ))}
       </div>

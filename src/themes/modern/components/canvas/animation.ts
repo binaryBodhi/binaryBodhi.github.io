@@ -11,9 +11,6 @@ export function needsAnimationFrame(
 ) {
   if (variant === "hero") return !options.lifeSettings().paused
   if (reducedMotion || variant === "takeover") return false
-  if (variant === "mark") {
-    // External weights redraw on their shared clock. Standalone marks stop once settled.
-    return !options.markWeights() && options.fromMark !== options.mark && time < options.transitionStart + MARK_MORPH_DURATION_MS
-  }
-  return true
+  // External weights redraw on their shared clock. Standalone marks stop once settled.
+  return !options.markWeights() && options.fromMark !== options.mark && time < options.transitionStart + MARK_MORPH_DURATION_MS
 }

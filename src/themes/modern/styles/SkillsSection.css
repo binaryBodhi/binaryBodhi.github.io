@@ -75,26 +75,6 @@
   padding: clamp(20px, 3vw, 40px);
 }
 
-.modern-skills-idle {
-  text-align: center;
-  color: #3e4b3f;
-}
-
-.modern-skills-idle-symbol {
-  display: block;
-  font: clamp(44px, 6vw, 76px) var(--modern-font-display);
-  opacity: 0.55;
-}
-
-.modern-skills-idle p {
-  margin: 24px 0 12px;
-  font: clamp(12px, 1.5vw, 17px) var(--modern-font-display);
-}
-
-.modern-skills-idle > span:last-child {
-  font-size: 13px;
-}
-
 .modern-skills-dock {
   display: flex;
   justify-content: center;
@@ -177,8 +157,6 @@
   background: #b5beac;
 }
 .modern-skills-titlebar h3 { margin: 0; font: clamp(9px, 1.1vw, 12px)/1.6 var(--modern-font-display); }
-.modern-skills-close { display: grid; place-items: center; flex: 0 0 22px; height: 22px; padding: 0; border: 1px solid #354234; background: #d6c1b3; color: #263827; font: 20px/1 monospace; cursor: pointer; }
-.modern-skills-close:focus-visible { outline: 2px solid #263827; outline-offset: 3px; }
 .modern-skills-window-grip { flex: 1; min-width: 12px; height: 13px; background: repeating-linear-gradient(0deg, #54614e 0 1px, transparent 1px 4px); }
 .modern-skills-window-content { padding: clamp(16px, 2.5vw, 28px); }
 .modern-skills-directory { margin: 0 0 22px; font: 9px/1.7 var(--modern-font-display); opacity: 0.65; overflow-wrap: anywhere; }
@@ -375,5 +353,4 @@
 .modern-music-playlist strong { display: block; font-size: 13px; font-weight: 500; }
 .modern-music-playlist small { display: block; margin-top: 4px; font-size: 11px; }
 .modern-music-status { font-size: 12px; line-height: 1.5; }
-.modern-music-add { font: 9px/1.6 var(--modern-font-display); }
 @media (max-width: 600px) { .modern-music-controls { flex-wrap: wrap; } .modern-music-controls label { width: 100%; margin-left: 0; } .modern-music-display { padding: 10px; gap: 10px; } .modern-music-display h4 { font-size: 11px; } }

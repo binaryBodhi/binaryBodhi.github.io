@@ -6,10 +6,6 @@
   .modern-hero-widgets {
     grid-column: 9 / -1;
   }
-
-  .modern-background-layout {
-    grid-template-columns: var(--modern-stack-columns, minmax(13rem, 0.55fr) minmax(0, 1.45fr));
-  }
 }
 
 @media (max-width: 767px) {
@@ -58,15 +54,6 @@
     padding: var(--modern-space-3);
   }
 
-  .modern-skills-canvas {
-    height: 17rem;
-    min-height: 17rem;
-  }
-
-  .modern-skills-heading {
-    margin-block: var(--modern-space-7);
-  }
-
   .modern-project-card {
     grid-template-columns: minmax(0, 1fr);
     min-height: auto;
@@ -93,39 +80,6 @@
     border-right: 0;
     border-bottom: var(--modern-border-width) solid var(--modern-border);
     border-left: 0;
-  }
-
-  .modern-skill-module {
-    min-height: auto;
-  }
-
-  .modern-background-layout {
-    gap: var(--modern-space-7);
-  }
-
-  .modern-background-heading {
-    position: static;
-  }
-
-  .modern-biography,
-  .modern-education-list {
-    grid-column: 1;
-  }
-
-  .modern-education-card {
-    gap: var(--modern-space-2);
-  }
-
-  .modern-education-card h3,
-  .modern-education-card h3 + p,
-  .modern-education-card strong,
-  .modern-education-card small,
-  .modern-education-card ul {
-    grid-column: 1;
-  }
-
-  .modern-education-card h3 {
-    margin-top: var(--modern-space-3);
   }
 
   .modern-contact-grid {
@@ -164,5 +118,4 @@
     opacity: 1;
     transform: none;
   }
-
 }
