@@ -2,16 +2,23 @@ export interface CanvasPalette {
   ink: string
   panel: string
   gold: string
+  pink: string
   heroPaper: string
   artPaper: string
+  markBackground?: string
+  markForeground?: string
+  markAccent?: string
 }
 
 export function readCanvasPalette(canvas: HTMLCanvasElement): CanvasPalette {
   const style = getComputedStyle(canvas)
   const read = (name: string) => style.getPropertyValue(`--modern-${name}`).trim()
   return {
-    ink: read("ink"), panel: read("panel"), gold: read("accent-gold"),
+    ink: read("ink"), panel: read("panel"), gold: read("accent-gold"), pink: read("accent-pink"),
     heroPaper: read("hero-paper"), artPaper: read("art-paper"),
+    markBackground: read("mark-background") || undefined,
+    markForeground: read("mark-foreground") || undefined,
+    markAccent: read("mark-accent") || undefined,
   }
 }
 

@@ -8,6 +8,7 @@ import { useExperienceMorph } from "./experience/useExperienceMorph"
 import { ExperienceHeading } from "./experience/ExperienceHeading"
 import { ExperienceCopyPanel } from "./experience/ExperienceCopyPanel"
 import { ExperienceNavigation } from "./experience/ExperienceNavigation"
+import { MobileExperienceBrowser } from "./experience/MobileExperienceBrowser"
 import { useExperienceTimeline } from "./experience/useExperienceTimeline"
 
 interface ExperienceSectionProps {
@@ -77,15 +78,7 @@ export function ExperienceSection({
             <p className="modern-section-label">Selected work history</p>
             <h2 id="modern-experience-title" className="modern-visually-hidden">Systems built for the real world</h2>
             <div className="modern-experience-panels">
-              {isCompact ? experience.map((item, index) => (
-                <article key={item.id} className="modern-experience-card" aria-label={`${item.role} at ${item.organization}`}>
-                  <ExperienceHeading experience={[item]} weights={[1]} activeIndex={0} startIndex={index} />
-                  <ExperienceCopyPanel experience={[item]} weights={[1]} activeIndex={0} />
-                  <div className="modern-experience-art-panel" aria-hidden="true">
-                    <PixelCanvas variant="mark" progress={fillProgress} mark={getOrganizationMark(item.organization)} />
-                  </div>
-                </article>
-              )) : (
+              {isCompact ? <MobileExperienceBrowser experience={experience} progress={fillProgress} /> : (
                 <>
                   <ExperienceHeading experience={experience} weights={weights} activeIndex={activeIndex} />
                   <ExperienceNavigation

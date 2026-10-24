@@ -2,7 +2,7 @@
 
 .modern-contact-section {
   min-height: max(44rem, 90svh);
-  background: var(--modern-accent-pink);
+  background: var(--modern-accent-gold);
 }
 
 .modern-contact-section .modern-section-body {
@@ -104,78 +104,4 @@
   letter-spacing: -0.08em;
   line-height: 0.8;
   white-space: nowrap;
-}
-
-/* Tetris fills the contact panel; the sidebar adapts below 600px. */
-.modern-contact-art:has(.modern-tetris) { min-height: 420px; }
-.modern-tetris {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  align-items: stretch;
-  justify-content: stretch;
-  height: 100%;
-  min-height: 420px;
-  gap: 0;
-  padding: 0;
-  color: var(--modern-ink);
-}
-.modern-tetris:focus-visible { outline: 2px dashed currentColor; outline-offset: -6px; }
-.modern-tetris-playfield { position: relative; width: 100%; height: 100%; min-height: 420px; flex-shrink: 0; }
-.modern-tetris-board {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(20, minmax(0, 1fr));
-  height: 100%;
-  width: 100%;
-  aspect-ratio: auto;
-  border: 0;
-  border-right: 1px solid currentColor;
-  background: #11111109;
-  gap: 1px;
-  padding: 4px;
-}
-.modern-tetris-board span { background: #11111105; }
-.modern-tetris-board .settled { background: var(--modern-ink); }
-.modern-tetris-board .active { background: var(--modern-accent-gold); border: 1px solid #11111170; }
-.modern-tetris-board .ghost { border: 1px solid #11111150; background: transparent; }
-.modern-tetris-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; background: #d4bccbbf; text-align: center; }
-.modern-tetris-overlay strong { font: clamp(20px, 2.5vw, 30px)/1.8 var(--modern-font-display); }
-.modern-tetris button { border: 1px solid currentColor; padding: 11px 12px; background: transparent; color: inherit; cursor: pointer; font: 11px/1.5 var(--modern-font-display); touch-action: manipulation; }
-.modern-tetris button:hover:not(:disabled), .modern-tetris button:focus-visible { background: var(--modern-ink); color: var(--modern-accent-pink); }
-.modern-tetris button:disabled { opacity: 0.4; cursor: default; }
-.modern-tetris-overlay button { font-size: 13px; padding: 14px 18px; }
-.modern-tetris-sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  max-width: none;
-  padding: 24px 18px;
-}
-.modern-tetris-heading { font: 11px/1.7 var(--modern-font-display); margin: 0 0 10px; }
-.modern-tetris-sidebar h3 { font: 28px var(--modern-font-display); margin: 0 0 24px; }
-.modern-tetris-sidebar dl { display: flex; flex-wrap: wrap; gap: 15px; margin: 0 0 20px; }
-.modern-tetris-sidebar dt { font: 10px var(--modern-font-display); margin-bottom: 8px; }
-.modern-tetris-sidebar dd { margin: 0; font: 17px var(--modern-font-display); }
-.modern-tetris-next { display: grid; grid-auto-rows: 12px; gap: 2px; margin-bottom: 18px; }
-.modern-tetris-next .filled { background: var(--modern-ink); }
-.modern-tetris-help { font-size: 14px; line-height: 1.9; }
-.modern-tetris-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.modern-tetris-touch { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
-.modern-tetris-touch button { min-width: 40px; min-height: 40px; }
-.modern-tetris-status { display: block; font-size: 13px; margin-top: 8px; }
-@media (max-width: 600px) {
-  .modern-tetris { grid-template-columns: minmax(0, 1fr) 150px; }
-  .modern-tetris-sidebar { padding: 18px 10px; }
-  .modern-tetris-heading { font-size: 9px; }
-  .modern-tetris-sidebar h3 { font-size: 21px; }
-  .modern-tetris-sidebar dl { gap: 10px; }
-  .modern-tetris-sidebar dt { font-size: 9px; }
-  .modern-tetris-sidebar dd { font-size: 14px; }
-  .modern-tetris-help { font-size: 12px; }
-  .modern-tetris button { font-size: 10px; padding: 9px 7px; }
-  .modern-tetris-overlay strong { font-size: 16px; }
-  .modern-tetris-overlay button { font-size: 10px; padding: 12px 9px; }
-  .modern-tetris-touch { gap: 4px; }
-  .modern-tetris-touch button { min-width: 36px; min-height: 36px; }
 }

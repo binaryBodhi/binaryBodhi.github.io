@@ -127,7 +127,8 @@ export const portfolioData = {
       skills: [
         "Python",
         "JavaScript",
-        "SQL"
+        "SQL",
+        "TypeScript",
       ]
     },
     {

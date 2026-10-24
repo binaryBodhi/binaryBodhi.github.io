@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createGame, tetrisReducer, fits } from '../src/themes/modern/components/tetrisEngine.ts'
+import { createGame, tetrisReducer, fits } from '../src/themes/modern/components/games/tetrisEngine.ts'
 
 test('hard drop locks a piece and spawns the next', () => {
   const game = tetrisReducer(createGame(), { type: 'start', seed: 42 })

@@ -1,74 +1,12 @@
-import { createLifeGrid, stepLifeGrid } from "../gameOfLife"
+import { drawLife } from "../games/drawLife"
 import { MARK_MORPH_DURATION_MS } from "../../../../shared/animation"
 import { smoothstep } from "../../../../shared/math"
 import { blendColor } from "./palette"
-import type { DrawOptions, PixelCanvasVariant } from "./types"
-
-type CanvasDrawer = (
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  time: number,
-  options: DrawOptions,
-) => void
+import type { CanvasDrawer, PixelCanvasVariant } from "./types"
 
 function pseudoRandom(x: number, y: number) {
   const value = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453
   return value - Math.floor(value)
-}
-
-const drawHero: CanvasDrawer = (context, width, height, time, options) => {
-  const cell = Math.max(7, Math.min(13, Math.floor(width / 42)))
-  const columns = Math.ceil(width / cell)
-  const rows = Math.ceil(height / cell)
-  const settings = options.lifeSettings()
-  if (!options.life || options.life.columns !== columns || options.life.rows !== rows
-    || options.life.seedPercent !== settings.seedPercent || options.life.restartToken !== settings.restartToken) {
-    options.life = {
-      columns,
-      rows,
-      cells: createLifeGrid(columns, rows, settings.seedPercent),
-      next: new Uint8Array(columns * rows),
-      lastStepTime: time,
-      seedPercent: settings.seedPercent,
-      restartToken: settings.restartToken,
-      paused: settings.paused,
-      generationsPerSecond: settings.generationsPerSecond,
-    }
-  }
-  const life = options.life
-  if (life.paused !== settings.paused || life.generationsPerSecond !== settings.generationsPerSecond) {
-    life.lastStepTime = time
-    life.paused = settings.paused
-    life.generationsPerSecond = settings.generationsPerSecond
-  }
-  // Resume with one step after an offscreen pause rather than rushing to catch up.
-  if (!settings.paused && time - life.lastStepTime >= 1000 / settings.generationsPerSecond) {
-    stepLifeGrid(life.cells, life.next, columns, rows)
-    const previous = life.cells
-    life.cells = life.next
-    life.next = previous
-    life.lastStepTime = time
-  }
-
-  context.fillStyle = options.palette.heroPaper
-  context.fillRect(0, 0, width, height)
-
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      if (life.cells[row * columns + column] === 0) continue
-
-      const accent = (column + row) % 17 === 0
-      context.fillStyle = accent ? options.palette.gold : options.palette.ink
-      const inset = accent ? 1 : Math.max(1, Math.floor(cell * 0.16))
-      context.fillRect(
-        column * cell + inset,
-        row * cell + inset,
-        cell - inset * 2,
-        cell - inset * 2,
-      )
-    }
-  }
 }
 
 const drawTakeover: CanvasDrawer = (context, width, height, _time, options) => {
@@ -76,7 +14,7 @@ const drawTakeover: CanvasDrawer = (context, width, height, _time, options) => {
 
   const progress = Math.min(1, Math.max(0, options.progress()))
   if (progress === 0) return
-  context.fillStyle = options.palette.ink
+  context.fillStyle = options.palette[options.takeoverColor()]
   if (progress === 1) {
     context.fillRect(0, 0, width, height)
     return
@@ -105,8 +43,8 @@ const glyphs: Record<string, string[]> = {
 
 const drawMark: CanvasDrawer = (context, width, height, time, options) => {
   const paletteProgress = Math.min(1, Math.max(0, options.progress()))
-  const background = blendColor(options.palette.panel, options.palette.ink, paletteProgress)
-  const foreground = blendColor(options.palette.ink, options.palette.artPaper, paletteProgress)
+  const background = options.palette.markBackground ?? blendColor(options.palette.panel, options.palette.ink, paletteProgress)
+  const foreground = options.palette.markForeground ?? blendColor(options.palette.ink, options.palette.artPaper, paletteProgress)
   context.fillStyle = background
   context.fillRect(0, 0, width, height)
 
@@ -143,14 +81,14 @@ const drawMark: CanvasDrawer = (context, width, height, time, options) => {
       const y = originY + row * cell + cell / 2 - size / 2 + driftY
       const isAccent = (row * 5 + column) % 17 === 0
 
-      context.fillStyle = isAccent ? options.palette.gold : foreground
+      context.fillStyle = isAccent ? (options.palette.markAccent ?? options.palette.markForeground ?? options.palette.gold) : foreground
       context.fillRect(Math.round(x), Math.round(y), Math.round(size), Math.round(size))
     }
   }
 }
 
 export const drawers = {
-  hero: drawHero,
+  hero: drawLife,
   mark: drawMark,
   takeover: drawTakeover,
 } satisfies Record<PixelCanvasVariant, CanvasDrawer>

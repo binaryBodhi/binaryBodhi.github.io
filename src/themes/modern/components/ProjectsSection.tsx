@@ -4,15 +4,19 @@ import { useReducedMotion } from "../../../shared/hooks/useReducedMotion"
 import { MARK_MORPH_DURATION_MS } from "../../../shared/animation"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
+import { SectionNavigation } from "./SectionNavigation"
 import { blendProps } from "./experience/blendProps"
 import { projectIndex, projectWheelSlots, projectWheelStyle } from "./projects/projectWheel"
 import { useProjectWheel } from "./projects/useProjectWheel"
 import { ProjectMark } from "./projects/ProjectMark"
 import { ProjectDetails } from "./projects/ProjectDetails"
+import { PixelCanvas } from "./PixelCanvas"
+import { useSectionPixelReveal } from "./projects/useSectionPixelReveal"
 
 export function ProjectsSection({ projects }: { projects: Project[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const reducedMotion = useReducedMotion()
+  const { bodyRef, backgroundProgress } = useSectionPixelReveal(reducedMotion)
   const position = useProjectWheel(activeIndex, reducedMotion)
   const slots = projectWheelSlots(position, projects.length)
   const visibleIndex = projectIndex(activeIndex, projects.length)
@@ -76,24 +80,15 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
       name="projects"
       index="03"
       label="Project archive"
+      bodyRef={bodyRef}
+      background={<PixelCanvas className="modern-project-background" variant="takeover" takeoverColor="pink" progress={backgroundProgress} />}
     >
       <h2 id="modern-projects-title" className="modern-visually-hidden">Projects</h2>
 
       {activeProject ? (
         <Reveal className="modern-project-stage" delay={80}>
-          <div className="modern-project-controls" aria-label="Project navigation">
-            <button type="button" onClick={() => showProject(-1)} disabled={projects.length < 2}>
-              <span aria-hidden="true">←</span> Previous
-            </button>
-            <div className="modern-project-progress" aria-hidden="true">
-              {projects.map((project, index) => (
-                <span key={project.id} className={index === visibleIndex ? "is-active" : ""} />
-              ))}
-            </div>
-            <button type="button" onClick={() => showProject(1)} disabled={projects.length < 2}>
-              Next <span aria-hidden="true">→</span>
-            </button>
-          </div>
+          <SectionNavigation label="Project navigation" items={projects} activeIndex={visibleIndex}
+            onPrevious={() => showProject(-1)} onNext={() => showProject(1)} />
 
           <article className="modern-project-card">
             <div className="modern-project-card-copy">

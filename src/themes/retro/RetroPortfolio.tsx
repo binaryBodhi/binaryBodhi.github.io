@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import type { PortfolioData } from "../../data/types"
 import { RetroEducation } from "./RetroEducation"
 import { RetroExperience } from "./RetroExperience"
@@ -12,6 +12,8 @@ interface RetroPortfolioProps {
 
 export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
   const [linksAreVisible, setLinksAreVisible] = useState(false)
+  const [updateIsVisible, setUpdateIsVisible] = useState(true)
+  const themeSwitchRef = useRef<HTMLButtonElement>(null)
   const [activeView, setActiveView] = useState<
     "home" | "education" | "experience" | "projects"
   >("home")
@@ -92,13 +94,36 @@ export function RetroPortfolio({ data, onSwitchTheme }: RetroPortfolioProps) {
         )}
 
         {onSwitchTheme && (
-          <button
-            className="retro-border-control retro-theme-switch"
-            type="button"
-            onClick={onSwitchTheme}
-          >
-            Modern Site
-          </button>
+          <>
+            {updateIsVisible && (
+              <aside className="retro-update" aria-labelledby="retro-update-title">
+                <div className="retro-update-titlebar">
+                  <strong id="retro-update-title">Portfolio update</strong>
+                  <button
+                    type="button"
+                    aria-label="Dismiss portfolio update"
+                    onClick={() => {
+                      setUpdateIsVisible(false)
+                      themeSwitchRef.current?.focus()
+                    }}
+                  >×</button>
+                </div>
+                <div className="retro-update-body">
+                  <p>A new look is available.</p>
+                  <p>Same developer. Modern edition.</p>
+                  <button type="button" onClick={onSwitchTheme}>Explore modern site ↗</button>
+                </div>
+              </aside>
+            )}
+            <button
+              ref={themeSwitchRef}
+              className="retro-border-control retro-theme-switch"
+              type="button"
+              onClick={onSwitchTheme}
+            >
+              Modern Site
+            </button>
+          </>
         )}
 
       </section>

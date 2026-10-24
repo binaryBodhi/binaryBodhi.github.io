@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type { ReactNode, Ref } from "react"
 
 interface SectionFrameProps {
   children: ReactNode
@@ -6,9 +6,11 @@ interface SectionFrameProps {
   name: string
   index: string
   label: string
+  bodyRef?: Ref<HTMLDivElement>
+  background?: ReactNode
 }
 
-export function SectionFrame({ children, name, index, label, className = `modern-${name}-section` }: SectionFrameProps) {
+export function SectionFrame({ children, name, index, label, bodyRef, background, className = `modern-${name}-section` }: SectionFrameProps) {
   const id = `modern-${name}`
   return (
     <section
@@ -16,10 +18,11 @@ export function SectionFrame({ children, name, index, label, className = `modern
       className={`modern-shell-section${className ? ` ${className}` : ""}`}
       aria-labelledby={`${id}-title`}
     >
+      {background}
       <div className="modern-section-index" aria-hidden="true">
         {index}
       </div>
-      <div className="modern-section-body">
+      <div ref={bodyRef} className="modern-section-body">
         <p className="modern-section-label">{label}</p>
         {children}
       </div>

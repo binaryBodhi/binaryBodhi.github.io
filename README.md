@@ -28,6 +28,8 @@ The build writes the production site to `dist/`. Run `npm run preview` to inspec
 - `src/data/`: portfolio content and its shared TypeScript contract.
 - `src/shared/`: date formatting, contact links, media-query hooks, and animation utilities.
 - `src/themes/modern/components/experience/`: experience panels and the scrolling timeline.
+- `src/themes/modern/components/skills/`: skills desktop, music player, styles, and cursor assets.
+- `src/themes/modern/components/games/`: Tetris and Game of Life components, engines, rendering, and styles.
 - `src/themes/modern/components/canvas/`: drawing functions, palette, and animation lifecycle.
 - `src/themes/modern/styles/`: section styles, shared widgets, and responsive rules.
 - `src/themes/retro/`: retro presentation and its styles.

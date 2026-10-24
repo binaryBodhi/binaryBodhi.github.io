@@ -244,6 +244,71 @@
   display: none;
 }
 
+.modern-theme-hint {
+  position: absolute;
+  top: calc(100% + var(--modern-space-3));
+  right: 0;
+  width: min(21rem, calc(100vw - 3rem));
+  border: var(--modern-border-width) solid var(--modern-ink);
+  background: var(--modern-panel);
+  color: var(--modern-ink);
+  box-shadow: 5px 5px 0 var(--modern-ink);
+}
+
+.modern-theme-hint-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--modern-space-3);
+  padding: var(--modern-space-2) var(--modern-space-3);
+  border-bottom: var(--modern-border-width) solid var(--modern-ink);
+  background: var(--modern-accent-pink);
+  font-family: var(--modern-font-display);
+  font-size: 0.65rem;
+}
+
+.modern-theme-hint button {
+  color: inherit;
+  cursor: pointer;
+}
+
+.modern-theme-hint-bar button {
+  border: 0;
+  background: transparent;
+  font: 1.5rem/1 var(--modern-font-body);
+}
+
+.modern-theme-hint-body {
+  padding: var(--modern-space-4);
+  font-family: var(--modern-font-body);
+}
+
+.modern-theme-hint-body h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.modern-theme-hint-body p {
+  margin: var(--modern-space-2) 0 var(--modern-space-4);
+  font-size: 0.95rem;
+}
+
+.modern-theme-hint-body button {
+  padding: var(--modern-space-3);
+  border: var(--modern-border-width) solid var(--modern-ink);
+  background: var(--modern-ink);
+  color: var(--modern-panel);
+  font-family: var(--modern-font-display);
+  font-size: 0.65rem;
+}
+
+.modern-theme-hint button:focus-visible {
+  outline: 2px solid var(--modern-accent-blue);
+  outline-offset: 3px;
+}
+
 .modern-theme-switch:hover,
 .modern-theme-switch:focus-visible {
   background: var(--modern-ink);

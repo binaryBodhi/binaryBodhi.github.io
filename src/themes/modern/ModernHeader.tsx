@@ -25,6 +25,7 @@ export function ModernHeader({
   onSwitchTheme,
 }: ModernHeaderProps) {
   const [scrambleTarget, setScrambleTarget] = useState<string | null>(null)
+  const [themeHintIsVisible, setThemeHintIsVisible] = useState(true)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const navigationRef = useRef<HTMLElement>(null)
   const restoreFocusFrameRef = useRef(0)
@@ -139,6 +140,19 @@ export function ModernHeader({
       </nav>
 
       {onSwitchTheme && <ThemeSwitchButton placement="desktop" onSwitch={onSwitchTheme} />}
+      {onSwitchTheme && themeHintIsVisible && !menuIsOpen && (
+        <aside className="modern-theme-hint" aria-labelledby="modern-theme-hint-title">
+          <div className="modern-theme-hint-bar">
+            <span>R / Alternate view</span>
+            <button type="button" aria-label="Dismiss retro site hint" onClick={() => setThemeHintIsVisible(false)}>×</button>
+          </div>
+          <div className="modern-theme-hint-body">
+            <h2 id="modern-theme-hint-title">A little more retro.</h2>
+            <p>Same developer. A different era.</p>
+            <button type="button" onClick={onSwitchTheme}>Explore retro site ↗</button>
+          </div>
+        </aside>
+      )}
     </header>
   )
 }

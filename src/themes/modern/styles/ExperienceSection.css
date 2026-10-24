@@ -348,7 +348,33 @@
     gap: var(--modern-space-6);
   }
   .modern-experience-card { display: grid; min-width: 0; gap: var(--modern-space-3); }
-  .modern-experience-morph { opacity: 1; transform: none; filter: none; }
+  .modern-experience-browser { display: grid; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+  .modern-experience-browser > .modern-project-controls { color: var(--modern-ink); background: var(--modern-panel); border-color: var(--modern-ink); }
+  .modern-experience-browser .modern-project-progress { position: relative; isolation: isolate; }
+  .modern-experience-progress-background { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .modern-experience-browser .modern-project-progress > span { position: relative; z-index: 1; border-color: color-mix(in srgb, var(--modern-panel) var(--modern-experience-panel-fill), var(--modern-ink)); }
+  .modern-experience-browser .modern-project-progress > span.is-active { background: color-mix(in srgb, var(--modern-panel) var(--modern-experience-panel-fill), var(--modern-ink)); }
+  .modern-experience-browser > .modern-experience-card { grid-row: 2; }
+  .modern-experience-flip { height: clamp(28.75rem, 81.25svh, 40rem); perspective: 1200px; }
+  .modern-experience-flip-inner { position: relative; height: 100%; transform-style: preserve-3d; transition: transform 600ms var(--modern-ease-standard); }
+  .modern-experience-flip.is-flipped .modern-experience-flip-inner { transform: rotateY(180deg); }
+  .modern-experience-flip-front,
+  .modern-experience-flip-back { position: absolute; inset: 0; min-width: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .modern-experience-flip-front .modern-experience-heading-panel { height: 100%; padding-bottom: 3.5rem; border-color: var(--modern-ink); }
+  .modern-experience-heading-row { display: grid; grid-template-columns: minmax(0, 1fr) 5rem; align-items: center; gap: 0.75rem; }
+  .modern-experience-heading-row .modern-experience-heading-stack { position: absolute; top: 5rem; left: 1rem; right: 1rem; }
+  .modern-experience-heading-row .modern-experience-inline-mark { grid-column: 2; }
+  .modern-experience-inline-mark { --modern-mark-background: var(--modern-accent-pink); --modern-mark-foreground: var(--modern-ink); --modern-mark-accent: #ffffff; width: 5rem; height: 7rem; pointer-events: none; }
+  .modern-experience-heading-row .modern-experience-heading-entry h3 { padding-top: 0; font-size: clamp(1.8rem, 7.2vw, 2.7rem); }
+  .modern-experience-heading-row .modern-experience-heading-entry > p { overflow-wrap: anywhere; font-size: 0.65rem; }
+  .modern-experience-flip-trigger { position: absolute; inset: 0; width: 100%; border: 0; padding: 1rem; background: transparent; color: var(--modern-ink); text-align: right; }
+  .modern-experience-flip-trigger span { position: absolute; right: 1rem; bottom: 1rem; font: 0.65rem/1.5 var(--modern-font-display); }
+  .modern-experience-flip-back { display: flex; flex-direction: column; transform: rotateY(180deg); border: var(--modern-border-width) solid var(--modern-ink); background: var(--modern-accent-gold); color: var(--modern-ink); }
+  .modern-experience-flip-back { cursor: pointer; }
+  .modern-experience-flip-description { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; }
+  .modern-experience-flip-back .modern-experience-copy-panel { border: 0; background: transparent; }
+  .modern-experience-flip-trigger:focus-visible,
+  .modern-experience-flip-back:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
   .modern-experience-heading-panel { min-height: 21rem; }
   .modern-experience-heading-panel h3 { padding-top: 5rem; font-size: clamp(2.4rem, 11vw, 4.4rem); }
   .modern-experience-heading-entry.has-long-title h3 { font-size: clamp(2.2rem, 9.5vw, 3.8rem); }
@@ -357,5 +383,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .modern-experience-flip-inner { transition: none; }
   .modern-experience-progress span { transition: none; }
 }

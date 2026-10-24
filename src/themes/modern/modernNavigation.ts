@@ -3,7 +3,7 @@ export const modernNavigationItems = [
   { id: "modern-experience", label: "Experience", key: "E", accent: "blue" },
   { id: "modern-projects", label: "Projects", key: "P", accent: "pink" },
   { id: "modern-skills", label: "Skills", key: "S", accent: "green" },
-  { id: "modern-contact", label: "Contact", key: "C", accent: "slate" },
+  { id: "modern-contact", label: "Contact", key: "C", accent: "gold" },
 ] as const
 
 export type ModernSectionId = (typeof modernNavigationItems)[number]["id"]

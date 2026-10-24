@@ -1,21 +1,19 @@
 /* A small desktop for the tools of the trade. */
 .modern-skills-section {
-  background: var(--modern-accent-slate);
+  grid-template-columns: var(--modern-rail-width) minmax(0, 1fr);
+  background: #000;
 }
 
-.modern-skills-section > .modern-section-body {
-  display: flex;
-  flex-direction: column;
+.modern-skills-section > .modern-section-index {
+  background: var(--modern-accent-slate);
 }
 
 .modern-skills-monitor {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: clamp(10px, 1.8vw, 24px) clamp(10px, 1.8vw, 24px) 0;
-  border: 2px solid var(--modern-ink);
-  border-radius: 18px;
-  background: #bfc0ba;
+  min-width: 0;
+  background: #000;
 }
 
 .modern-skills-glass-defs {
@@ -28,7 +26,7 @@
   flex: 1;
   padding: 5px;
   clip-path: url(#modern-skills-glass-curve);
-  background: #383e38;
+  background: #000;
 }
 
 .modern-skills-screen {
@@ -81,8 +79,8 @@
   align-items: end;
   align-self: center;
   max-width: calc(100% - 24px);
-  gap: clamp(3px, 1vw, 14px);
-  padding: 12px clamp(6px, 1.5vw, 22px) 6px;
+  gap: clamp(3px, 0.5vw, 7px);
+  padding: 8px clamp(6px, 0.8vw, 12px) 2px;
   margin: 12px 12px 20px;
   border: 1px solid #515d50;
   border-radius: 13px;
@@ -95,7 +93,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: clamp(44px, 7.8vw, 94px);
+  width: clamp(44px, 6.8vw, 82px);
   padding: 0;
   border: 0;
   background: none;
@@ -119,7 +117,7 @@
 .modern-skills-dock-button:focus-visible .modern-skills-dock-icon { transform: translateY(-7px); }
 .modern-skills-dock-button:focus-visible { outline: 2px dashed #263827; outline-offset: 4px; border-radius: 4px; }
 .modern-skills-dock-label { margin-top: 9px; font-size: 9px; white-space: nowrap; }
-.modern-skills-dock-indicator { width: 4px; height: 4px; margin-top: 5px; background: transparent; }
+.modern-skills-dock-indicator { width: 4px; height: 4px; margin-top: 2px; background: transparent; }
 .modern-skills-dock-button.is-active .modern-skills-dock-indicator { background: currentColor; }
 
 .modern-skills-dock-tooltip {
@@ -242,16 +240,16 @@
 
 /* Classic monochrome Mac cursors, scoped to the desktop display. */
 .modern-skills-screen {
-  cursor: url("../assets/mac-arrow.svg") 3 2, default;
+  cursor: url("./assets/mac-arrow.svg") 3 2, default;
 }
 .modern-skills-screen button {
-  cursor: url("../assets/mac-hand.svg") 8 2, pointer;
+  cursor: url("./assets/mac-hand.svg") 8 2, pointer;
 }
 .modern-skills-screen .modern-skills-titlebar {
-  cursor: url("../assets/mac-grab.svg") 9 9, grab;
+  cursor: url("./assets/mac-grab.svg") 9 9, grab;
 }
 .modern-skills-screen .modern-skills-titlebar:active {
-  cursor: url("../assets/mac-grab.svg") 9 9, grabbing;
+  cursor: url("./assets/mac-grab.svg") 9 9, grabbing;
 }
 
 .modern-skills-traffic-lights { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
@@ -341,6 +339,8 @@
 .modern-music-player input[type="range"] { width: 100%; accent-color: #354234; }
 .modern-music-progress > div { display: flex; justify-content: space-between; font: 10px monospace; }
 .modern-music-controls { display: flex; align-items: center; gap: 10px; margin-block: 16px; }
+.modern-music-control-icon { display: block; width: 20px; height: 20px; flex-shrink: 0; }
+.modern-music-selected-marker .modern-music-control-icon { width: 10px; height: 10px; transform: rotate(180deg); }
 .modern-music-player button { background: transparent; color: inherit; border: 1px solid #54614e; padding: 8px 12px; }
 .modern-music-player button:disabled { opacity: 0.4; }
 .modern-music-player button:focus-visible { outline: 2px dashed currentColor; outline-offset: 2px; }
@@ -354,3 +354,61 @@
 .modern-music-playlist small { display: block; margin-top: 4px; font-size: 11px; }
 .modern-music-status { font-size: 12px; line-height: 1.5; }
 @media (max-width: 600px) { .modern-music-controls { flex-wrap: wrap; } .modern-music-controls label { width: 100%; margin-left: 0; } .modern-music-display { padding: 10px; gap: 10px; } .modern-music-display h4 { font-size: 11px; } }
+@media (max-width: 767px) {
+  .modern-music-controls > button { display: grid; min-width: 44px; min-height: 44px; padding: 8px; place-items: center; }
+  .modern-music-controls > .modern-music-play { min-width: 56px; }
+}
+
+/* Keep the desktop in the proportions of a classic CRT display. */
+@media (min-width: 701px) {
+  .modern-skills-section { min-height: 0; }
+  .modern-skills-monitor {
+    width: min(100%, calc((100svh - var(--modern-header-height) - 4rem) * 4 / 3));
+    aspect-ratio: 4 / 3;
+    justify-self: center;
+    align-self: start;
+    overflow: hidden;
+  }
+  .modern-skills-screen,
+  .modern-skills-workspace { min-height: 0; }
+}
+
+/* A brief CRT warm-up each time the desktop enters the viewport. */
+@media (prefers-reduced-motion: no-preference) {
+  .modern-skills-monitor:not(.is-powered-on) .modern-skills-screen {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .modern-skills-monitor.is-powered-on .modern-skills-screen {
+    animation: modern-crt-power-on 1700ms linear both;
+    transform-origin: center;
+  }
+}
+
+@keyframes modern-crt-power-on {
+  0% { opacity: 0; transform: scale(0.94, 0.004); filter: brightness(0.5); }
+  12% { opacity: 0.8; transform: scale(0.98, 0.008); filter: brightness(1.1); }
+  28% { opacity: 0.3; transform: scale(1, 0.65); filter: brightness(0.65); }
+  48% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  65% { opacity: 0.65; transform: scale(1); filter: brightness(0.8); }
+  82%, 100% { opacity: 1; transform: scale(1); filter: none; }
+}
+
+.modern-music-modes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.modern-music-modes button { font: 9px/1.6 var(--modern-font-display); }
+.modern-music-modes button[aria-pressed="true"] { background: #aebba3; }
+
+.modern-skills-screen .modern-music-player input[type="range"] {
+  cursor: url("./assets/mac-hand.svg") 8 2, pointer;
+}
+.modern-skills-screen .modern-music-player input[type="range"]::-webkit-slider-runnable-track,
+.modern-skills-screen .modern-music-player input[type="range"]::-webkit-slider-thumb {
+  cursor: inherit;
+}
+.modern-skills-screen .modern-music-player input[type="range"]::-moz-range-track,
+.modern-skills-screen .modern-music-player input[type="range"]::-moz-range-thumb {
+  cursor: inherit;
+}
+.modern-skills-screen .modern-music-player input[type="range"]:active {
+  cursor: url("./assets/mac-grab.svg") 9 9, grabbing;
+}

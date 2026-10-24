@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { useReducedMotion } from "../../../../shared/hooks/useReducedMotion"
 import { MARK_MORPH_DURATION_MS } from "../../../../shared/animation"
-import { DEFAULT_LIFE_SETTINGS } from "../gameOfLife"
+import { DEFAULT_LIFE_SETTINGS } from "../games/gameOfLife"
 import { drawers } from "./drawings"
 import { needsAnimationFrame } from "./animation"
 import { readCanvasPalette } from "./palette"
@@ -13,18 +13,19 @@ export function usePixelCanvas({
   markWeights,
   onComplete,
   progress = 1,
+  takeoverColor = "ink",
   variant,
 }: Omit<PixelCanvasProps, "className">) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const previousMarkRef = useRef(mark.toUpperCase().slice(0, 1))
-  const settingsRef = useRef({ progress, markWeights, lifeSettings })
+  const settingsRef = useRef({ progress, markWeights, lifeSettings, takeoverColor })
   const redrawRef = useRef<(() => void) | null>(null)
   const reducedMotion = useReducedMotion()
 
   useLayoutEffect(() => {
-    settingsRef.current = { progress, markWeights, lifeSettings }
+    settingsRef.current = { progress, markWeights, lifeSettings, takeoverColor }
     redrawRef.current?.()
-  }, [markWeights, lifeSettings, progress])
+  }, [markWeights, lifeSettings, progress, takeoverColor])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -44,6 +45,7 @@ export function usePixelCanvas({
       mark: nextMark,
       markWeights: () => settingsRef.current.markWeights,
       progress: () => settingsRef.current.progress,
+      takeoverColor: () => settingsRef.current.takeoverColor,
       transitionStart: window.performance.now(),
       lifeSettings: () => settingsRef.current.lifeSettings ?? { ...DEFAULT_LIFE_SETTINGS, paused: reducedMotion },
       life: null,

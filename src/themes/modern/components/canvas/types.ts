@@ -1,4 +1,4 @@
-import type { LifeSettings } from "../gameOfLife"
+import type { LifeSettings } from "../games/gameOfLife"
 import type { CanvasPalette } from "./palette"
 
 export type PixelCanvasVariant =
@@ -15,6 +15,7 @@ export interface PixelCanvasProps {
   /** Called after the takeover's final, fully opaque frame is drawn. */
   onComplete?: () => void
   progress?: number
+  takeoverColor?: "ink" | "pink"
   variant: PixelCanvasVariant
 }
 
@@ -24,6 +25,7 @@ export interface DrawOptions {
   mark: string
   markWeights: () => Readonly<Record<string, number>> | undefined
   progress: () => number
+  takeoverColor: () => "ink" | "pink"
   transitionStart: number
   lifeSettings: () => LifeSettings
   life: (LifeSettings & {
@@ -35,3 +37,10 @@ export interface DrawOptions {
   }) | null
 }
 
+export type CanvasDrawer = (
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  options: DrawOptions,
+) => void

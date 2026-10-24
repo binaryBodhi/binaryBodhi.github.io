@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import { clamp } from "../../../../shared/math"
 import { getScrollOffset } from "../../../../shared/dom"
+import { mobileExperienceExitProgress } from "./mobileExperienceReveal"
 
 interface TimelineOptions {
   experienceCount: number
@@ -34,10 +35,14 @@ export function useExperienceTimeline({
     let entranceFrame = 0
     let entranceStarted = false
     let currentEntranceProgress = 0
+    let mobileExitProgress = 1
     const publishTakeover = () => {
+      const entranceFill = clamp((currentEntranceProgress - 0.22) / 0.78, 0, 1)
+      const exitFill = reducedMotion ? Number(mobileExitProgress > 0.5) : mobileExitProgress
+      const progress = isCompact ? Math.min(entranceFill, exitFill) : entranceFill
       onTakeoverChange(
-        clamp((currentEntranceProgress - 0.22) / 0.78, 0, 1),
-        currentEntranceProgress > 0,
+        progress,
+        isCompact ? progress > 0 : currentEntranceProgress > 0,
       )
     }
 
@@ -78,10 +83,17 @@ export function useExperienceTimeline({
       const rootRect = scrollRoot.getBoundingClientRect()
       const sectionRect = section.getBoundingClientRect()
       if (isCompact) {
-        // Phones use a natural list rather than a pinned timeline. Start the
-        // same background reveal as Experience enters the reading area.
-        const activationLine = rootRect.top + scrollRoot.clientHeight * 0.3
-        playTransition(sectionRect.top <= activationLine && sectionRect.bottom > rootRect.top ? 1 : 0)
+        // Start shortly after Experience enters the viewport so the reveal
+        // can play while the user scrolls toward the card.
+        const activationLine = rootRect.top + scrollRoot.clientHeight * 0.9
+        mobileExitProgress = mobileExperienceExitProgress(sectionRect.bottom, rootRect.top, scrollRoot.clientHeight)
+        // Entry is timed; exit follows the Experience/Projects boundary so
+        // the page blackout cannot linger over Projects after a fast swipe.
+        const shouldStayActive = entranceStarted
+          ? sectionRect.top < rootRect.top + scrollRoot.clientHeight &&
+            sectionRect.bottom > rootRect.top
+          : sectionRect.top <= activationLine && sectionRect.bottom > rootRect.top
+        playTransition(shouldStayActive ? 1 : 0)
         publishTakeover()
         return
       }

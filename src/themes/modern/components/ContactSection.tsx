@@ -1,6 +1,6 @@
 import { getContactLinks } from "../../../shared/contactLinks"
 import type { PortfolioData } from "../../../data/types"
-import { Tetris } from "./TetrisGame"
+import { Tetris } from "./games/TetrisGame"
 import { Reveal } from "./Reveal"
 import { SectionFrame } from "./SectionFrame"
 

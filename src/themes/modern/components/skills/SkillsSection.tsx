@@ -1,10 +1,9 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as ReactPointerEvent } from "react"
-import type { PortfolioData } from "../../../data/types"
-import { formatDateRange } from "../../../shared/date"
-import { BulletList } from "../../../shared/BulletList"
+import type { PortfolioData } from "../../../../data/types"
+import { formatDateRange } from "../../../../shared/date"
+import { BulletList } from "../../../../shared/BulletList"
 import { MusicPlayer } from "./MusicPlayer"
-import { SectionFrame } from "./SectionFrame"
 
 const dockLabels: Record<string, string> = {
   music: "Music",
@@ -28,8 +27,30 @@ function SkillIcon({ category }: { category: string }) {
 }
 
 export function SkillsSection({ skills, profile, education }: Pick<PortfolioData, "skills" | "profile" | "education">) {
+  const monitorRef = useRef<HTMLDivElement>(null)
+  const [screenIsOn, setScreenIsOn] = useState(false)
+
+  useEffect(() => {
+    const monitor = monitorRef.current
+    if (!monitor) return
+    let powerOnTimer: number | undefined
+    const observer = new IntersectionObserver(([entry]) => {
+      window.clearTimeout(powerOnTimer)
+      // On short/mobile viewports, wait until the display fills the available
+      // view instead of requiring an oversized screen to be entirely visible.
+      const availableHeight = Math.min(entry.boundingClientRect.height, entry.rootBounds?.height ?? entry.boundingClientRect.height)
+      const isReady = entry.isIntersecting && entry.intersectionRect.height >= availableHeight * 0.92
+      if (isReady) powerOnTimer = window.setTimeout(() => setScreenIsOn(true), 200)
+      else if (!entry.isIntersecting) setScreenIsOn(false)
+    }, { root: monitor.closest(".modern-main"), threshold: Array.from({ length: 101 }, (_, index) => index / 100) })
+    observer.observe(monitor)
+    return () => {
+      window.clearTimeout(powerOnTimer)
+      observer.disconnect()
+    }
+  }, [])
   const desktopEntries = education.map((item) => ({ id: `education-${item.id}`, name: item.qualification, skills: [], education: item }))
-  const dockEntries = [...skills, { id: "music", name: "Music Player", skills: [] }]
+  const dockEntries = [{ id: "music", name: "Music Player", skills: [] }, ...skills]
   const windowEntries = [...dockEntries.map((group) => ({ ...group, education: undefined })), ...desktopEntries]
   const [openIds, setOpenIds] = useState<string[]>([])
   const [minimizedIds, setMinimizedIds] = useState<string[]>([])
@@ -73,16 +94,17 @@ export function SkillsSection({ skills, profile, education }: Pick<PortfolioData
   }
 
   return (
-    <SectionFrame name="skills" index="04" label="Technical system map">
+    <section id="modern-skills" className="modern-shell-section modern-skills-section" aria-labelledby="modern-skills-title">
+      <div className="modern-section-index" aria-hidden="true">04</div>
       <h2 id="modern-skills-title" hidden>Skills</h2>
       <svg width="0" height="0" aria-hidden="true" focusable="false" className="modern-skills-glass-defs">
         <defs>
           <clipPath id="modern-skills-glass-curve" clipPathUnits="objectBoundingBox">
-            <path d="M .045 .025 Q .5 -.025 .955 .025 Q .98 .028 .985 .055 Q 1.015 .5 .985 .945 Q .98 .972 .955 .975 Q .5 1.025 .045 .975 Q .02 .972 .015 .945 Q -.015 .5 .015 .055 Q .02 .028 .045 .025 Z" />
+            <path d="M .05 .035 Q .5 -.035 .95 .035 Q .975 .039 .98 .065 Q 1.02 .5 .98 .935 Q .975 .961 .95 .965 Q .5 1.035 .05 .965 Q .025 .961 .02 .935 Q -.02 .5 .02 .065 Q .025 .039 .05 .035 Z" />
           </clipPath>
         </defs>
       </svg>
-      <div className="modern-skills-monitor">
+      <div ref={monitorRef} className={`modern-skills-monitor${screenIsOn ? " is-powered-on" : ""}`}>
         <div className="modern-skills-glass-rim">
         <div className="modern-skills-screen" onKeyDown={(event) => {
           const frontId = openIds.findLast((id) => !minimizedIds.includes(id))
@@ -195,8 +217,7 @@ export function SkillsSection({ skills, profile, education }: Pick<PortfolioData
           </nav>
         </div>
         </div>
-        <div className="modern-skills-monitor-chin" aria-hidden="true"><span>SK — PERSONAL COMPUTER</span><span className="modern-skills-power" /></div>
       </div>
-    </SectionFrame>
+    </section>
   )
 }

@@ -21,7 +21,7 @@ function measureThemeFrame(theme: Theme): ThemeTransitionRect {
 }
 
 function App() {
-  const [theme, setTheme] = useState<Theme>("modern")
+  const [theme, setTheme] = useState<Theme>("retro")
   const [activeTransition, setActiveTransition] =
     useState<ActiveTransition | null>(null)
   const [announcement, setAnnouncement] = useState("")

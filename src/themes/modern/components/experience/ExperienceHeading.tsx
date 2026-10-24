@@ -1,11 +1,13 @@
 import { blendProps, type ExperienceBlendProps } from "./blendProps"
+import type { ReactNode } from "react"
 
 interface ExperienceHeadingProps extends ExperienceBlendProps {
   startIndex?: number
+  mark?: ReactNode
 }
 
 export function ExperienceHeading({
-  experience, weights, activeIndex, startIndex = 0,
+  experience, weights, activeIndex, startIndex = 0, mark,
 }: ExperienceHeadingProps) {
   return (
     <header className="modern-experience-heading-panel">
@@ -23,6 +25,7 @@ export function ExperienceHeading({
           ))}
         </span>
       </span>
+      <div className={mark ? "modern-experience-heading-row" : undefined}>
       <div className="modern-experience-heading-stack">
         {experience.map((item, index) => (
           <div
@@ -34,6 +37,8 @@ export function ExperienceHeading({
             <p className="modern-experience-morph">{item.organization}</p>
           </div>
         ))}
+      </div>
+      {mark}
       </div>
     </header>
   )
