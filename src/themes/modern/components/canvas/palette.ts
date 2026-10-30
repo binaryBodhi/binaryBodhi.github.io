@@ -23,7 +23,11 @@ export function readCanvasPalette(canvas: HTMLCanvasElement): CanvasPalette {
 }
 
 export function blendColor(from: string, to: string, progress: number) {
-  const channels = (hex: string) => [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16))
+  const channels = (hex: string) => {
+    // Production CSS minification can shorten #ffffff to #fff.
+    const expanded = hex.length === 4 ? `#${[...hex.slice(1)].map((digit) => digit + digit).join("")}` : hex
+    return [1, 3, 5].map((index) => Number.parseInt(expanded.slice(index, index + 2), 16))
+  }
   const start = channels(from)
   const end = channels(to)
   return `rgb(${start.map((value, index) => Math.round(value + (end[index] - value) * progress)).join(", ")})`
